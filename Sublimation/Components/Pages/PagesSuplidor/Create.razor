@@ -90,23 +90,35 @@
 
     public async Task Guardar()
     {
-        var guardo = await suplidorservice.Guardar(suplidor);
-        if (guardo)
-        {
-            notificatioService.ShowNotification(
-            titulo: "Exito",
-            mensaje: "Guardado correctamente",
-            NotificationSeverity.Success);
-
-            await Task.Delay(3000);
-            Atras();
-        }
-        else
+        bool cedulaExiste = await suplidorservice.ExisteRNC(suplidor.RNC);
+        if (cedulaExiste)
         {
             notificatioService.ShowNotification(
             titulo: "Error",
-            mensaje: "Ocurrio un error y no fue posible guardar",
+            mensaje: "Este RNC ya está registrada en el sistema. No es posible guardar este suplidor.",
             NotificationSeverity.Error);
+            return;
+        }
+        else
+        {
+            var guardo = await suplidorservice.Guardar(suplidor);
+            if (guardo)
+            {
+                notificatioService.ShowNotification(
+                titulo: "Exito",
+                mensaje: "Guardado correctamente",
+                NotificationSeverity.Success);
+
+                await Task.Delay(3000);
+                Atras();
+            }
+            else
+            {
+                notificatioService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Ocurrio un error y no fue posible guardar",
+                NotificationSeverity.Error);
+            }
         }
     }
 

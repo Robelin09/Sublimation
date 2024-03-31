@@ -7,6 +7,7 @@
 @inject ClienteService clienteservice
 @inject VentaService ventaService
 @inject DialogService dialogService
+@inject NotificationService notificationService
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
 
@@ -111,9 +112,35 @@
 
     public async Task Guardar()
     {
-        var guardo = await reclamoservice.Guardar(reclamo);
-        if (guardo)
-            Atras();
+        if (reclamo.VentaId <= 0 || reclamo.ClienteId <= 0)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Debe seleccionar una venta y un Cliente.",
+                NotificationSeverity.Error);
+            return;
+        }
+        else
+        {
+            var guardo = await reclamoservice.Guardar(reclamo);
+            if (guardo)
+            {
+                notificationService.ShowNotification(
+                titulo: "Exito",
+                mensaje: "Guardado correctamente",
+                NotificationSeverity.Success);
+
+                await Task.Delay(3000);
+                Atras();
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Ocurrio un error y no fue posible guardar",
+                NotificationSeverity.Error);
+            }
+        }
     }
 
     void Atras()
