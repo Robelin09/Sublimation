@@ -1,0 +1,96 @@
+﻿@page "/ViewCompra"
+@page "/ViewCompra/{CompraId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject SuplidorService suplidorService
+@inject UsuarioService usuarioService
+@inject CompraService compraService
+@inject DialogService dialogService
+<RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
+<RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
+
+<div class="card">
+    <div class="card-header bg-primary text-light">
+        <h1 class="mb-0">Detalles de la Compra</h1>
+    </div>
+    <div class="card-body">
+
+        <dl class="row">
+
+            <dt class="col-sm-3">Compras Id:</dt>
+            <dd class="col-sm-9">@compra.ComprasId</dd>
+
+            <dt class="col-sm-3">Fecha del Registro:</dt>
+            <dd class="col-sm-9">@compra.FechaCompra</dd>
+
+            <dt class="col-sm-3">Suplidor Id:</dt>
+            <dd class="col-sm-9">@ObtenerNombreSuplidor(compra.SuplidorId)</dd>
+
+            <dt class="col-sm-3">Usuario Id:</dt>
+            <dd class="col-sm-9">@ObtenerNombreUsuario(compra.UsuarioId)</dd>
+
+            <dt class="col-sm-3">Descripci&oacute;n:</dt>
+            <dd class="col-sm-9">@compra.Descripcion</dd>
+
+            
+        </dl>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Nombre Articulo</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in ListaDetalleCompras)
+                {
+                    <tr>
+                        <td>@detalle.InsumoId</td>
+                        <td>@detalle.Cantidad</td>
+                        <td>@detalle.Precio.ToString("N")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card-footer">
+        <a href="/IndexCompra" class="btn btn-outline-danger bi bi bi-arrow-return-left"> Volver</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int CompraId { get; set; }
+    public Compras compra { get; set; } = new Compras();
+    public ComprasDetalle CompraDetalle { get; set; } = new ComprasDetalle();
+    public List<ComprasDetalle> ListaDetalleCompras { get; set; } = new List<ComprasDetalle>();
+
+
+    public List<Usuarios> ListaUsuarios { get; set; } = new List<Usuarios>();
+    public List<Suplidores> ListaSuplidores { get; set; } = new List<Suplidores>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaUsuarios = await usuarioService.Listar(t => true);
+        ListaSuplidores = await suplidorService.Listar(t => true);
+        compra = await compraService.GetCompras(CompraId);
+        if (compra != null)
+        {
+            ListaDetalleCompras = compra.ComprasDetalle.ToList();
+        }
+
+    }
+    public string ObtenerNombreUsuario(int usuario)
+    {
+        var Nombre = ListaUsuarios.FirstOrDefault(c => c.UsuarioId == usuario);
+        return Nombre != null ? Nombre.Nombre : string.Empty;
+    }
+
+    public string ObtenerNombreSuplidor(int suplidor)
+    {
+        var Nombre = ListaSuplidores.FirstOrDefault(c => c.SuplidorId == suplidor);
+        return Nombre != null ? Nombre.Nombre : string.Empty;
+    }
+}
