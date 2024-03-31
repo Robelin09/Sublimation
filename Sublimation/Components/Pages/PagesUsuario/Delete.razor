@@ -1,0 +1,97 @@
+﻿@page "/DeleteUsuario"
+@page "/DeleteUsuario/{UsuarioId:int}"
+@inject UsuarioService usuarioservice
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject DialogService dialogService
+<RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
+
+
+<PageTitle>Eliminar Usuario</PageTitle>
+
+<div class="card">
+    <div class="card-header bg-danger text-light">
+        <h1 class="mb-0">¿Desea Eliminar este Usuario?</h1>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Detalles del Usuario</h5>
+        <dl class="row">
+            <dt class="col-sm-3">EmpleadoId:</dt>
+            <dd class="col-sm-9">@usuario.UsuarioId</dd>
+
+            <dt class="col-sm-3">Nombres:</dt>
+            <dd class="col-sm-9">@usuario.Nombre</dd>
+
+            <dt class="col-sm-3">T&eacute;lefono:</dt>
+            <dd class="col-sm-9">@usuario.Telefono</dd>
+
+            <dt class="col-sm-3">C&eacute;dula:</dt>
+            <dd class="col-sm-9">@usuario.Cedula</dd>
+
+            <dt class="col-sm-3">Direcci&oacute;n:</dt>
+            <dd class="col-sm-9">@usuario.Direccion</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@usuario.Email</dd>
+
+            <dt class="col-sm-3">Cargo:</dt>
+            <dd class="col-sm-9">@usuario.Cargo</dd>
+
+            <dt class="col-sm-3">Fecha:</dt>
+            <dd class="col-sm-9">@usuario.FechaRegistro.ToString("dd/MM/yyyy")</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a href="/IndexUsuario" class="btn btn-outline-primary bi bi bi-arrow-return-left"> Volver</a>
+        <button type="button" class="btn btn-outline-danger" @onclick="MostrarDialogoEliminar">Eliminar</button>
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int UsuarioId { get; set; }
+    public Usuarios usuario { get; set; } = new Usuarios();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (UsuarioId > 0)
+        {
+            usuario.UsuarioId = UsuarioId;
+            await this.Buscar();
+        }
+    }
+    public async Task Buscar()
+    {
+        var usuarioEncontrado = await usuarioservice.Buscar(usuario.UsuarioId);
+
+        if (usuarioEncontrado != null)
+        {
+            this.usuario = usuarioEncontrado;
+        }
+    }
+    public async Task MostrarDialogoEliminar()
+    {
+        var result = await dialogService.Confirm("¿Está seguro que desea eliminar este Usuario?", "Confirmar eliminación");
+
+        if (result.GetValueOrDefault())
+        {
+            await Eliminar();
+        }
+    }
+    public async Task Eliminar()
+    {
+        if (!await usuarioservice.Existe(usuario.UsuarioId))
+        {
+            return;
+        }
+        if (await usuarioservice.Eliminar(this.usuario))
+        {
+            Atras();
+        }
+    }
+    void Atras()
+    {
+        Navigation.NavigateTo("/IndexUsuario");
+    }
+}
