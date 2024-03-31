@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Shared.Models;
+using Library.Models;
 
 namespace Sublimation.DAL;
 

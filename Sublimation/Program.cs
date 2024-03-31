@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Sublimation.Client.Pages;
 using Sublimation.Components;
 using Sublimation.Components.Account;
+using Sublimation.DAL;
 using Sublimation.Data;
 
 namespace Sublimation
@@ -35,6 +36,12 @@ namespace Sublimation
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+
+            var ConStr = builder.Configuration.GetConnectionString("ConStr");
+            builder.Services.AddDbContext<Contexto>(op => op.UseSqlite(ConStr));
+
+
 
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
