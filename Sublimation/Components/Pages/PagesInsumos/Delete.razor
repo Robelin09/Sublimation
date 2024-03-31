@@ -1,0 +1,103 @@
+﻿@page "/DeleteInsumo"
+@page "/DeleteInsumo/{InsumoId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject InsumoService insumoService
+@inject NotificationService notificationService
+@inject SuplidorService suplidoreService
+@inject DialogService dialogService
+<RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
+<RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
+
+<div class="card">
+    <div class="card-header bg-danger text-light">
+        <h1 class="mb-0">¿Desea Eliminar este Insumo?</h1>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Detalles del Insumo:</h5>
+        <dl class="row">
+            <dt class="col-sm-3">InsumosId:</dt>
+            <dd class="col-sm-9">@insumo.InsumosId</dd>
+
+            <dt class="col-sm-3">Suplidor:</dt>
+            <dd class="col-sm-9">@ObtenerNombreSuplidor(insumo.SuplidorId)</dd>
+
+            <dt class="col-sm-3">Nombre Insumo:</dt>
+            <dd class="col-sm-9">@insumo.NombreInsumo</dd>
+
+            <dt class="col-sm-3">Descripci&oacute;n:</dt>
+            <dd class="col-sm-9">@insumo.Descripcion</dd>
+
+            <dt class="col-sm-3">Cantdad:</dt>
+            <dd class="col-sm-9">@insumo.Cantidad </dd>
+
+            <dt class="col-sm-3">Fecha Registro:</dt>
+            <dd class="col-sm-9">@insumo.fechaRegistro.ToString("dd/MM/yyyy")</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a href="/IndexInsumo" class="btn btn-outline-primary bi bi bi-arrow-return-left"> Volver</a>
+        <button type="button" class="btn btn-outline-danger" @onclick="MostrarDialogoEliminar">Eliminar</button>
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int InsumoId { get; set; }
+    public Insumos insumo { get; set; } = new Insumos();
+    public List<Suplidores> listaSuplidores = new List<Suplidores>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaSuplidores = await suplidoreService.Listar(t => true);
+        if (InsumoId > 0)
+        {
+            insumo.InsumosId = InsumoId;
+            await this.Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var clienteEncontrado = await insumoService.Buscar(insumo.InsumosId);
+
+        if (clienteEncontrado != null)
+        {
+            this.insumo = clienteEncontrado;
+        }
+    }
+
+    public string ObtenerNombreSuplidor(int suplidor)
+    {
+        var Nombre = listaSuplidores.FirstOrDefault(c => c.SuplidorId == suplidor);
+        return Nombre != null ? Nombre.Nombre : string.Empty;
+    }
+
+    public async Task MostrarDialogoEliminar()
+    {
+        var result = await dialogService.Confirm("¿Está seguro que desea eliminar este Insumo?", "Confirmar eliminación");
+
+        if (result.GetValueOrDefault())
+        {
+            await Eliminar();
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        if (!await insumoService.Existe(insumo.InsumosId))
+        {
+            return;
+        }
+        if (await insumoService.Eliminar(this.insumo))
+        {
+            Atras();
+        }
+    }
+
+    void Atras()
+    {
+        Navigation.NavigateTo("/IndexCliente");
+    }
+}
