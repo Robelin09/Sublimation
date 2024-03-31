@@ -2,6 +2,7 @@
 @page "/DeleteSuplidor/{SuplidorId:int}"
 @rendermode InteractiveServer
 @inject SuplidorService suplidorservice
+@attribute [Authorize]
 @inject NavigationManager Navigation
 @inject DialogService dialogService
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>

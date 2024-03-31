@@ -1,6 +1,7 @@
 ﻿@page "/IndexUsuario"
 @page "/IndexUsuario/{UsuarioId:int}"
 @inject UsuarioService usuarioservice
+@attribute [Authorize]
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 

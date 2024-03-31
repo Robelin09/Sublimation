@@ -2,6 +2,7 @@
 @page "/DeleteCliente/{ClienteId:int}"
 @inject ClienteService clienteservice
 @inject NavigationManager Navigation
+@attribute [Authorize]
 @inject DialogService dialogService
 @rendermode InteractiveServer
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>

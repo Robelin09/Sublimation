@@ -2,6 +2,7 @@
 @page "/DeleteServicio/{ServicioId:int}"
 @inject NavigationManager Navigation
 @inject ServicioService servicioservice
+@attribute [Authorize]
 @rendermode InteractiveServer
 @inject DialogService dialogService
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>

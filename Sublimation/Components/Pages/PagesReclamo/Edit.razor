@@ -3,6 +3,7 @@
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject ReclamoService reclamoservice
+@attribute [Authorize]
 @inject ClienteService clienteservice
 @inject VentaService ventaService
 @inject DialogService dialogService
@@ -110,7 +111,6 @@
 
     public async Task Guardar()
     {
-        reclamo.Email = "Rammon@gmail.com";
         var guardo = await reclamoservice.Guardar(reclamo);
         if (guardo)
             Atras();

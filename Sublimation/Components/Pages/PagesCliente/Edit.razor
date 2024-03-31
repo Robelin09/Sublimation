@@ -1,5 +1,6 @@
 ﻿@page "/EditCliente"
 @page "/EditCliente/{ClienteId:int}"
+@attribute [Authorize]
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject ClienteService clienteservice

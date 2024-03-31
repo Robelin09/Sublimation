@@ -2,6 +2,7 @@
 @page "/ViewCompra/{CompraId:int}"
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@attribute [Authorize]
 @inject SuplidorService suplidorService
 @inject UsuarioService usuarioService
 @inject CompraService compraService

@@ -1,6 +1,7 @@
 ﻿@page "/ViewReclamo"
 @page "/ViewReclamo/{ReclamoId:int}"
 @inject NavigationManager Navigation
+@attribute [Authorize]
 @inject ReclamoService reclamoservice
 @rendermode InteractiveServer
 @inject ClienteService clienteservice
