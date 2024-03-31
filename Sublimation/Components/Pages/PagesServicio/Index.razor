@@ -1,0 +1,145 @@
+﻿@page "/IndexServicio"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject ServicioService servicioservice
+
+<PageTitle>Detalles de Servicios</PageTitle>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Detalles de Servivios</h3>
+        <a href="/CreateServicio" class="btn btn-outline-primary bi bi-plus-square">  Crear</a>
+    </div>
+    <div class="card-body">
+        <div class="input-group-text">
+
+            <label class="form-control-label col-1">Desde:</label>
+            <div class="col-3">
+                <input class="form-control" type="date" @bind="Desde" />
+            </div>
+
+            <label class="form-control-label col-1">Hasta:</label>
+            <div class="col-3">
+                <input class="form-control" type="date" @bind="Hasta" />
+            </div>
+
+            <div class="col-5">
+                <button type="button" @onclick="Buscar" class="btn btn-primary  ">
+                    <i class="bi bi-search" />
+                    <br /> Buscar
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <label>Filtrar Por</label>
+                <InputSelect @bind-Value="Opcion" class="form-select">
+                    <option value="0" selected disabled>Seleccione</option>
+                    <option value="1">ServicioId</option>
+                    <option value="2">Tipo de Servicio</option>
+                </InputSelect>
+            </div>
+
+            @if (Opcion == 1)
+            {
+                <div class="col-3">
+                    <label>ID</label>
+                    <div class="input-group">
+                        <InputNumber @bind-Value="ServiciosId" class="form-control"></InputNumber>
+                    </div>
+                </div>
+            }
+            else if (Opcion == 2)
+            {
+                <div class="col-3">
+                    <label>Tipo de Servicio</label>
+                    <div class="input-group">
+                        <InputText @bind-Value="TipoServicio" class="form-control"></InputText>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center">ID</th>
+                    <th scope="col" class="text-center">Fecha del Registro</th>
+                    <th scope="col" class="text-center">Tipo de Servicio</th>
+                    <th scope="col" class="text-center">Descripci&oacute;n</th>
+                    <th scope="col" class="text-center">Costo del Servicio</th>
+                    <th scope="col" class="text-center">Editar</th>
+                    <th scope="col" class="text-center">Eliminar</th>
+                    <th scope="col" class="text-center">Ver</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var servicio in ListaServicios)
+                {
+                    <tr>
+                        <td class="text-center">@servicio.ServicioId</td>
+                        <td class="text-center">@servicio.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">@servicio.TipoServicio</td>
+                        <td class="text-center">@servicio.Descripcion</td>
+                        <td class="text-center">@servicio.CostoServicio.ToString("N2")</td>
+                        <td class="text-center"><a href="/EditServicio/@servicio.ServicioId" class="bi bi-pencil-square"></a></td>
+                        <td class="text-center"><a href="/DeleteServicio/@servicio.ServicioId" class="bi bi-trash"></a></td>
+                        <td class="text-center"><a href="/ViewServicio/@servicio.ServicioId" class="bi bi-eye"></a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="card-footer fw-bold">
+            <p>Cantidad de Servicios: @ListaServicios.Count</p>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a href="/" class="btn btn-outline-danger bi bi-house-door-fill"> Volver</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int ServicioId { get; set; }
+    public Servicios servicio { get; set; } = new Servicios();
+    public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
+    public int ServiciosId { get; set; }
+    public string TipoServicio { get; set; }
+    public int Opcion = 0;
+    public DateTime Desde { get; set; }
+    public DateTime Hasta { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaServicios = await servicioservice.Listar(t => true);
+        Desde = DateTime.Now.AddMonths(-1);
+        Hasta = DateTime.Now;
+    }
+    public async Task Buscar()
+    {
+        Hasta = new DateTime(Hasta.Year, Hasta.Month, Hasta.Day, 23, 59, 59);
+        if (Opcion == 0)
+        {
+            ListaServicios = await servicioservice.Listar(t => t.FechaRegistro >= Desde && t.FechaRegistro <= Hasta);
+        }
+        if (Opcion == 1)
+        {
+            if (ServiciosId <= 0)
+                ListaServicios = await servicioservice.Listar(t => true);
+            else
+                ListaServicios = await servicioservice.Listar(t => t.ServicioId == ServiciosId && t.FechaRegistro >= Desde && t.FechaRegistro <= Hasta);
+        }
+        if (Opcion == 2)
+        {
+            if (string.IsNullOrEmpty(TipoServicio))
+            {
+                ListaServicios = await servicioservice.Listar(t => true);
+            }
+            else
+            {
+                ListaServicios = await servicioservice.Listar(t => t.TipoServicio.ToLower().Contains(TipoServicio.ToLower()) && t.FechaRegistro >= Desde && t.FechaRegistro <= Hasta);
+            }
+        }
+    }
+}

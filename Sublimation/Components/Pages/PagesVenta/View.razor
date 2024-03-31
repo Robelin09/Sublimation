@@ -1,0 +1,103 @@
+﻿@page "/ViewVenta"
+@page "/ViewVenta/{VentaId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject VentaService ventaservice
+@inject ClienteService clienteservice
+@inject UsuarioService usuarioservice
+@inject ServicioService servicioservice
+
+<PageTitle>Ver Venta</PageTitle>
+
+<div class="card">
+    <div class="card-header bg-primary text-light">
+        <h1 class="mb-0">Detalles de la Venta</h1>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">VentaId:</dt>
+            <dd class="col-sm-9">@venta.VentaId</dd>
+
+            <dt class="col-sm-3">Fecha del Registro:</dt>
+            <dd class="col-sm-9">@venta.FechaRegistro.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-3">Cliente:</dt>
+            <dd class="col-sm-9">@ObtenerNombreCliente(venta.ClienteId)</dd>
+
+            <dt class="col-sm-3">Usuario:</dt>
+            <dd class="col-sm-9">@ObtenerNombreUsuario(venta.UsuarioId)</dd>
+
+            <dt class="col-sm-3">Servicio:</dt>
+            <dd class="col-sm-9">@ObtenerServicio(venta.ServicioId)</dd>
+
+            <dt class="col-sm-3">Monto Total:</dt>
+            <dd class="col-sm-9">@venta.MontoTotal.ToString("N2")</dd>
+        </dl>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Fecha Estimada de Entrega</th>
+                    <th>Direcci&oacute;n</th>
+                    <th>Servicio de Grua</th>
+                    <th>Instalaci&oacute;n</th>
+                    <th>Costo</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in ListaDetalleVenta)
+                {
+                    <tr>
+                        <td>@detalle.FechaEstimadaEntrega</td>
+                        <td>@detalle.Direccion</td>
+                        <td>@detalle.ServicioGrua</td>
+                        <td>@detalle.Instalacion</td>
+                        <td>@detalle.Costo</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        <a href="/IndexVenta" class="btn btn-outline-danger bi bi bi-arrow-return-left"> Volver</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int VentaId { get; set; }
+    public Ventas venta { get; set; } = new Ventas();
+    public VentasDetalle ventaDetalle { get; set; } = new VentasDetalle();
+    public List<VentasDetalle> ListaDetalleVenta { get; set; } = new List<VentasDetalle>();
+    public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
+    public List<Usuarios> ListaUsuarios { get; set; } = new List<Usuarios>();
+    public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        venta = await ventaservice.GetVentas(VentaId);
+        if (venta != null)
+        {
+            ListaDetalleVenta = venta.VentasDetalle.ToList();
+        }
+        ListaUsuarios = await usuarioservice.Listar(t => true);
+        ListaServicios = await servicioservice.Listar(t => true);
+        ListaClientes = await clienteservice.Listar(t => true);
+
+    }
+    public string ObtenerNombreCliente(int cliente)
+    {
+        var Nombre = ListaClientes.FirstOrDefault(c => c.ClienteId == cliente);
+        return Nombre != null ? Nombre.Nombre : string.Empty;
+    }
+    public string ObtenerNombreUsuario(int usuario)
+    {
+        var Nombre = ListaUsuarios.FirstOrDefault(c => c.UsuarioId == usuario);
+        return Nombre != null ? Nombre.Nombre : string.Empty;
+    }
+    public string ObtenerServicio(int servicio)
+    {
+        var Nombre = ListaServicios.FirstOrDefault(c => c.ServicioId == servicio);
+        return Nombre != null ? Nombre.TipoServicio : string.Empty;
+    }
+}

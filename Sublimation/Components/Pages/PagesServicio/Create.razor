@@ -1,0 +1,102 @@
+﻿@page "/CreateServicio"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject ServicioService servicioservice
+@inject NotificationService notificationService
+<RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
+<RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
+
+<PageTitle>Registro de Servicios</PageTitle>
+<EditForm Model="servicio" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Registro de Servicios</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col col-6">
+                    <label>Tipo Servicio:</label>
+                    <InputText @bind-Value="servicio.TipoServicio" class="form-control"></InputText>
+                    <ValidationMessage For="(() => servicio.TipoServicio)"></ValidationMessage>
+                </div>
+                <div class="col col-6">
+                    <label>Fecha Registro:</label>
+                    <InputDate @bind-Value="servicio.FechaRegistro" class="form-control"></InputDate>
+                    <ValidationMessage For="@(() => servicio.FechaRegistro)" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col col-4">
+                    <label>Costo:</label>
+                    <InputNumber @bind-Value="servicio.CostoServicio" class="form-control"></InputNumber>
+                    <ValidationMessage For="(() => servicio.CostoServicio)"></ValidationMessage>
+                </div>
+                <div class="col col-8">
+                    <label>Descripci&oacute;n:</label>
+                    <InputText @bind-Value="servicio.Descripcion" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => servicio.Descripcion)" />
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <a href="/IndexServicio" class="btn btn-outline-danger bi bi-arrow-return-left"> Volver</a>
+                <button type="submit" class="btn btn-outline-success bi bi-floppy-fill"> Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int ServicioId { get; set; }
+    public Servicios servicio { get; set; } = new Servicios();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ServicioId > 0)
+        {
+            this.servicio.ServicioId = ServicioId;
+            await this.Buscar();
+        }
+
+        servicio.FechaRegistro = DateTime.Now;
+    }
+    public async Task Buscar()
+    {
+        var servicioEncontrado = await servicioservice.Buscar(servicio.ServicioId);
+
+        if (servicioEncontrado != null)
+        {
+            this.servicio = servicioEncontrado;
+        }
+    }
+    public async Task Guardar()
+    {
+        var guardo = await servicioservice.Guardar(servicio);
+        if (guardo)
+        {
+            notificationService.ShowNotification(
+            titulo: "Exito",
+            mensaje: "Guardado correctamente",
+            NotificationSeverity.Success);
+
+            await Task.Delay(3000);
+            Atras();
+        }
+        else
+        {
+            notificationService.ShowNotification(
+            titulo: "Error",
+            mensaje: "Ocurrio un error y no fue posible guardar",
+            NotificationSeverity.Error);
+        }
+    }
+    void Atras()
+    {
+        Navigation.NavigateTo("/IndexServicio");
+    }
+}

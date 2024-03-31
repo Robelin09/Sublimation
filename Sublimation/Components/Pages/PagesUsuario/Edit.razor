@@ -1,0 +1,117 @@
+﻿@page "/EditUsuario"
+@page "/EditUsuario/{UsuarioId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject UsuarioService usuarioservice
+@inject DialogService dialogService
+<RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
+<RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
+
+<PageTitle>Edición de Usuarios</PageTitle>
+<EditForm Model="usuario" OnValidSubmit="MostrarDialogoGuardar">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header">
+            <h3>Editar Usuario</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @*   <div class="col col-6">
+                <label>UsuarioId</label>
+                <InputNumber @bind-Value="usuario.UsuarioId" class="form-control"></InputNumber>
+                <ValidationMessage For="(() => usuario.UsuarioId)"></ValidationMessage>
+                </div>*@
+                <div class="col col-6">
+                    <label>Fecha:</label>
+                    <InputDate @bind-Value="usuario.FechaRegistro" class="form-control"></InputDate>
+                    <ValidationMessage For="(() => usuario.FechaRegistro)"></ValidationMessage>
+                </div>
+            </div>
+            <div>
+                <label>Nombre:</label>
+                <InputText @bind-Value="usuario.Nombre" class="form-control"></InputText>
+                <ValidationMessage For="@(() => usuario.Nombre)" />
+            </div>
+            <div class="row">
+                <div class="col col-6">
+                    <label>C&eacute;dula:</label>
+                    <InputText @bind-Value="usuario.Cedula" class="form-control"></InputText>
+                    <ValidationMessage For="(() => usuario.Cedula)"></ValidationMessage>
+                </div>
+                <div class="col col-6">
+                    <label>T&eacutelefono:</label>
+                    <InputText @bind-Value="usuario.Telefono" class="form-control"></InputText>
+                    <ValidationMessage For="(() => usuario.Telefono)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col col-6">
+                    <label>Email:</label>
+                    <InputText @bind-Value="usuario.Email" class="form-control"></InputText>
+                    <ValidationMessage For="(() => usuario.Email)"></ValidationMessage>
+                </div>
+                <div class="col col-6">
+                    <label>Cargo:</label>
+                    <InputText @bind-Value="usuario.Cargo" class="form-control"></InputText>
+                    <ValidationMessage For="(() => usuario.Cargo)"></ValidationMessage>
+                </div>
+            </div>
+
+            <div>
+                <label>Direcci&oacute;n:</label>
+                <InputText @bind-Value="usuario.Direccion" class="form-control"></InputText>
+                <ValidationMessage For="@(() => usuario.Direccion)" />
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <a href="/IndexUsuario" class="btn btn-outline-danger bi bi-arrow-return-left"> Volver</a>
+                <button type="submit" class="btn btn-outline-success bi bi-floppy-fill"> Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int UsuarioId { get; set; }
+    public Usuarios usuario { get; set; } = new Usuarios();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (UsuarioId > 0)
+        {
+            this.usuario.UsuarioId = UsuarioId;
+            await this.Buscar();
+        }
+        usuario.FechaRegistro = DateTime.Now;
+    }
+    public async Task Buscar()
+    {
+        var usuarioEncontrado = await usuarioservice.Buscar(usuario.UsuarioId);
+
+        if (usuarioEncontrado != null)
+        {
+            this.usuario = usuarioEncontrado;
+        }
+    }
+    public async Task MostrarDialogoGuardar()
+    {
+        var result = await dialogService.Confirm("¿Está seguro que desea guardar los cambios en este Usuario?", "Confirmar Edici&oacute;n");
+
+        if (result.GetValueOrDefault())
+        {
+            await Guardar();
+        }
+    }
+    public async Task Guardar()
+    {
+        var guardo = await usuarioservice.Guardar(usuario);
+        if (guardo)
+            Atras();
+    }
+    void Atras()
+    {
+        Navigation.NavigateTo("/IndexUsuario");
+    }
+}

@@ -1,0 +1,89 @@
+﻿@page "/DeleteServicio"
+@page "/DeleteServicio/{ServicioId:int}"
+@inject NavigationManager Navigation
+@inject ServicioService servicioservice
+@rendermode InteractiveServer
+@inject DialogService dialogService
+<RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
+<RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
+
+<PageTitle>Eliminar Servicio</PageTitle>
+
+<div class="card">
+    <div class="card-header bg-danger text-light">
+        <h1 class="mb-0">¿Desea Eliminar este Servicio?</h1>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Detalles del Servicio</h5>
+        <dl class="row">
+            <dt class="col-sm-3">ServicioId:</dt>
+            <dd class="col-sm-9">@servicio.ServicioId</dd>
+
+            <dt class="col-sm-3">Fecha Registro:</dt>
+            <dd class="col-sm-9">@servicio.FechaRegistro.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-3">Tipo de Servicio:</dt>
+            <dd class="col-sm-9">@servicio.TipoServicio</dd>
+
+            <dt class="col-sm-3">Descripci&oacute;n:</dt>
+            <dd class="col-sm-9">@servicio.Descripcion</dd>
+
+            <dt class="col-sm-3">Costo del Servicio:</dt>
+            <dd class="col-sm-9">@servicio.CostoServicio.ToString("N2")</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a href="/IndexServicio" class="btn btn-outline-primary bi bi bi-arrow-return-left"> Volver</a>
+        <button type="button" class="btn btn-outline-danger" @onclick="MostrarDialogoEliminar">Eliminar</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int ServicioId { get; set; }
+    public Servicios servicio { get; set; } = new Servicios();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ServicioId > 0)
+        {
+            servicio.ServicioId = ServicioId;
+            await this.Buscar();
+        }
+    }
+    public async Task Buscar()
+    {
+        var servicioEncontrado = await servicioservice.Buscar(servicio.ServicioId);
+
+        if (servicioEncontrado != null)
+        {
+            this.servicio = servicioEncontrado;
+        }
+    }
+    public async Task MostrarDialogoEliminar()
+    {
+        var result = await dialogService.Confirm("¿Está seguro que desea eliminar este Servicio?", "Confirmar eliminación");
+
+        if (result.GetValueOrDefault())
+        {
+            await Eliminar();
+        }
+    }
+    public async Task Eliminar()
+    {
+        if (!await servicioservice.Existe(servicio.ServicioId))
+        {
+            return;
+        }
+        if (await servicioservice.Eliminar(this.servicio))
+        {
+            Atras();
+        }
+    }
+    void Atras()
+    {
+        Navigation.NavigateTo("/IndexServicio");
+    }
+}
+
+

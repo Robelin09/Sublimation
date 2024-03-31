@@ -1,0 +1,214 @@
+﻿@page "/EditVenta"
+@page "/EditVenta/{VentaId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject VentaService ventaservice
+@inject ClienteService clienteservice
+@inject UsuarioService usuarioService
+@inject ServicioService servicioService
+@inject NotificationService notificationService
+<RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
+
+<PageTitle>Edición de Venta</PageTitle>
+<EditForm Model="venta" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h3>Editar Venta</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="row">
+                    <div class="col col-4">
+                        <label>Cliente:</label>
+                        <InputSelect @bind-Value="venta.ClienteId" class="form-select">
+                            @foreach (var item in listaClientes)
+                            {
+                                <option value="@item.ClienteId">@item.Nombre</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => venta.ClienteId)"></ValidationMessage>
+                    </div>
+                    <div class="col col-4">
+                        <label>Fecha Registro:</label>
+                        <InputDate @bind-Value="venta.FechaRegistro" class="form-control"></InputDate>
+                        <ValidationMessage For="(() => venta.FechaRegistro)"></ValidationMessage>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-4">
+                        <label>Usuario:</label>
+                        <InputSelect @bind-Value="venta.UsuarioId" class="form-select">
+                            @foreach (var item in listaUsuarios)
+                            {
+                                <option value="@item.UsuarioId">@item.Nombre</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => venta.UsuarioId)"></ValidationMessage>
+                    </div>
+                    <div class="col col-4">
+                        <label>Servicio:</label>
+                        <InputSelect @bind-Value="venta.ServicioId" class="form-select">
+                            @foreach (var item in listaServicios)
+                            {
+                                <option value="@item.ServicioId">@item.TipoServicio</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => venta.ServicioId)"></ValidationMessage>
+                    </div>
+                    <div class="col col-4">
+                        <label>Monto Total:</label>
+                        <InputNumber @bind-Value="venta.MontoTotal" class="form-control"></InputNumber>
+                        <ValidationMessage For="(() => venta.MontoTotal)"></ValidationMessage>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="card-header">
+                <h4>Detalles de la Venta</h4>
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col col-4">
+                        <label>Fecha de entrega Estimada:</label>
+                        <InputDate @bind-Value="Detalle.FechaEstimadaEntrega" class="form-control"></InputDate>
+                        <ValidationMessage For="(() => Detalle.FechaEstimadaEntrega)"></ValidationMessage>
+                    </div>
+                    <div class="col col">
+                        <label>Servicio de grua:</label>
+                        <InputCheckbox @bind-Value="Detalle.ServicioGrua" class="form-check"></InputCheckbox>
+                    </div>
+                    <div class="col col">
+                        <label>Instalaci&oacute;n:</label>
+                        <InputCheckbox @bind-Value="Detalle.Instalacion" class="form-check"></InputCheckbox>
+                    </div>
+                    <div class="col col">
+                        <label>Costo:</label>
+                        <InputNumber @bind-Value="Detalle.Costo" class="form-control"></InputNumber>
+                        <ValidationMessage For="(() => Detalle.Costo)"></ValidationMessage>
+                    </div>
+                </div>
+                <div>
+                    <label>Direcci&oacute;n:</label>
+                    <InputText @bind-Value="Detalle.Direccion" class="form-control"></InputText>
+                    <ValidationMessage For="(() => Detalle.Direccion)"></ValidationMessage>
+                </div>
+                <br />
+                <table class='table table-bordered table-hover'>
+                    <thead>
+                        <tr>
+                            <th>Fecha Estimada de Entrega</th>
+                            <th>Direcci&oacute;n</th>
+                            <th>Servicio de Grua</th>
+                            <th>Instalaci&oacute;n</th>
+                            <th>Costo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detalle in venta.VentasDetalle)
+                        {
+                            <tr>
+                                <td>@detalle.FechaEstimadaEntrega</td>
+                                <td>@detalle.Direccion</td>
+                                <td>@detalle.ServicioGrua</td>
+                                <td>@detalle.Instalacion</td>
+                                <td>@detalle.Costo</td>
+                                <td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-primary bi bi-plus-square">Agregar</button>
+
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <a href="/IndexVenta" class="btn btn-outline-danger bi bi-arrow-return-left"> Volver</a>
+                <button type="submit" class="btn btn-outline-success bi bi-floppy-fill"> Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int VentaId { get; set; }
+    public Ventas venta { get; set; } = new Ventas();
+    public VentasDetalle Detalle { get; set; } = new VentasDetalle();
+    public List<VentasDetalle> ListaDetalleVenta { get; set; } = new List<VentasDetalle>();
+    public List<Clientes> listaClientes { get; set; } = new List<Clientes>();
+    public List<Usuarios> listaUsuarios { get; set; } = new List<Usuarios>();
+    public List<Servicios> listaServicios { get; set; } = new List<Servicios>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (VentaId > 0)
+        {
+            venta = await ventaservice.GetVentas(VentaId);
+            if (venta != null)
+            {
+                ListaDetalleVenta = venta.VentasDetalle.ToList();
+            }
+            else
+            {
+                Navigation.NavigateTo("/Error");
+            }
+        }
+        else
+        {
+            Navigation.NavigateTo("/Error");
+        }
+        listaClientes = await clienteservice.Listar(t => true);
+        listaUsuarios = await usuarioService.Listar(t => true);
+        listaServicios = await servicioService.Listar(t => true);
+        venta.FechaRegistro = DateTime.Now;
+        Detalle.FechaEstimadaEntrega = DateTime.Now.AddDays(+15);
+    }
+    public async Task Guardar()
+    {
+        if (venta.VentasDetalle.Count == 0)
+        {
+            notificationService.ShowNotification(
+            titulo: "Error",
+            mensaje: "No se puede registrar una venta sin el detalle",
+            NotificationSeverity.Error);
+            return;
+        }
+        var guardo = await ventaservice.Guardar(venta);
+        if (guardo)
+        {
+            notificationService.ShowNotification(
+            titulo: "Exito",
+            mensaje: "Guardado correctamente",
+            NotificationSeverity.Success);
+
+            await Task.Delay(3000);
+            Navigation.NavigateTo("/IndexVenta");
+        }
+        else
+        {
+            notificationService.ShowNotification(
+            titulo: "Error",
+            mensaje: "Ocurrio un error y no fue posible guardar",
+            NotificationSeverity.Error);
+        }
+    }
+    public void AgregarDetalle()
+    {
+        if (Detalle.FechaEstimadaEntrega != null && !string.IsNullOrEmpty(Detalle.Direccion))
+        {
+            venta.VentasDetalle.Add(Detalle);
+            Detalle = new VentasDetalle();
+        }
+    }
+    public void EliminarDetalle(VentasDetalle detalle)
+    {
+        Detalle = detalle;
+        venta.VentasDetalle.Remove(detalle);
+    }
+}

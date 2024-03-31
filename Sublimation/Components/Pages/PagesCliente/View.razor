@@ -1,0 +1,64 @@
+﻿@page "/ViewCliente"
+@page "/ViewCliente/{ClienteId:int}"
+@inject ClienteService clienteservice
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Ver Cliente</PageTitle>
+
+<div class="card">
+    <div class="card-header bg-primary text-light">
+        <h1 class="mb-0">Detalles del Cliente</h1>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">ClienteId:</dt>
+            <dd class="col-sm-9">@cliente.ClienteId</dd>
+
+            <dt class="col-sm-3">Nombre:</dt>
+            <dd class="col-sm-9">@cliente.Nombre</dd>
+
+            <dt class="col-sm-3">T&eacute;lefono:</dt>
+            <dd class="col-sm-9">@cliente.Telefono</dd>
+
+            <dt class="col-sm-3">C&eacute;dula:</dt>
+            <dd class="col-sm-9">@cliente.Cedula</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@cliente.Email</dd>
+
+            <dt class="col-sm-3">Direcci&oacute;n:</dt>
+            <dd class="col-sm-9">@cliente.Direccion</dd>
+
+            <dt class="col-sm-3">Fecha del Registro</dt>
+            <dd class="col-sm-9">@cliente.FechaRegistro.ToString("dd/MM/yyyy")</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a href="/IndexCliente" class="btn btn-outline-primary bi bi bi-arrow-return-left"> Volver</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int ClienteId { get; set; }
+    public Clientes cliente { get; set; } = new Clientes();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ClienteId > 0)
+        {
+            cliente.ClienteId = ClienteId;
+            await this.Buscar();
+        }
+    }
+    public async Task Buscar()
+    {
+        var clienteEncontrado = await clienteservice.Buscar(cliente.ClienteId);
+
+        if (clienteEncontrado != null)
+        {
+            this.cliente = clienteEncontrado;
+        }
+    }
+}
