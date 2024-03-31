@@ -105,9 +105,13 @@
 </div>
 
 @code {
+    [Parameter]
+    public int ComprasId { get; set; }
     public Compras compra { get; set; } = new Compras();
     public List<Compras> ListaCompras { get; set; } = new List<Compras>();
     public int Opcion = 0;
+    public int ComprassId { get; set; }
+    public string Descripcion { get; set; }
 
     public DateTime Desde { get; set; }
     public DateTime Hasta { get; set; }

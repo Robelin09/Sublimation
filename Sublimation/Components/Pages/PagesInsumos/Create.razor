@@ -1,0 +1,100 @@
+﻿@page "/CreateInsumo"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject InsumoService insumoService
+@inject NotificationService notificationService
+@inject SuplidorService suplidoreService
+<RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
+<RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
+
+<PageTitle>Registro de Insumos</PageTitle>
+<EditForm Model="insumo"  OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Registro de Insumos</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col col-4">
+                    <label>Suplidor:</label>
+                    <InputSelect @bind-Value="insumo.SuplidorId" class="form-select">
+                        @foreach (var item in listaSuplidores)
+                        {
+                            <option value="@item.SuplidorId">@item.Nombre</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="(() => insumo.SuplidorId)"></ValidationMessage>
+                </div>
+                <div class="col col-4">
+                    <label>Nombre Insumo:</label>
+                    <InputText @bind-Value="insumo.NombreInsumo" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => insumo.NombreInsumo)" />
+                </div>
+                <div class="col col-4">
+                    <label>Fecha:</label>
+                    <InputDate @bind-Value="insumo.fechaRegistro" class="form-control"></InputDate>
+                    <ValidationMessage For="(() => insumo.fechaRegistro)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col col-4">
+                    <label>Cantidad:</label>
+                    <InputNumber @bind-Value="insumo.Cantidad" class="form-control"></InputNumber>
+                    <ValidationMessage For="(() => insumo.Cantidad)"></ValidationMessage>
+                </div>
+                <div class="col col-8">
+                    <label>Descripci&oacute;n:</label>
+                    <InputText @bind-Value="insumo.Descripcion" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => insumo.Descripcion)" />
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <a href="/IndexInsumo" class="btn btn-outline-danger bi bi-arrow-return-left"> Volver</a>
+                <button type="submit" class="btn btn-outline-success bi bi-floppy-fill"> Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public Insumos insumo { get; set; } = new Insumos();
+
+    public List<Suplidores> listaSuplidores = new List<Suplidores>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaSuplidores = await suplidoreService.Listar(t => true);
+        insumo.fechaRegistro = DateTime.Now;
+    }
+
+    public async Task Guardar()
+    {
+        var guardo = await insumoService.Guardar(insumo);
+        if (guardo)
+        {
+            notificationService.ShowNotification(
+            titulo: "Exito",
+            mensaje: "Guardado correctamente",
+            NotificationSeverity.Success);
+
+            await Task.Delay(3000);
+            Atras();
+        }
+        else
+        {
+            notificationService.ShowNotification(
+            titulo: "Error",
+            mensaje: "Ocurrio un error y no fue posible guardar",
+            NotificationSeverity.Error);
+        }
+    }
+
+    void Atras()
+    {
+        Navigation.NavigateTo("/IndexInsumo");
+    }
+}
