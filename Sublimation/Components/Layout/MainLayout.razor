@@ -1,24 +1,111 @@
 ﻿@inherits LayoutComponentBase
+@implements IDisposable
+
+@inject NavigationManager NavigationManager
 <RadzenComponents />
-
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+	@*<div class="sidebar">
+	<NavMenu />
+	</div>*@
+	<main>
+		<div class="top-row px-4">
+			<div class="container-fluid d-flex align-items-center">
+				<AuthorizeView>
+					<Authorized>
+						<a href="/">
+							<img src="Logo_.png" alt="Sublimation"
+								style="width: 30px; height: auto; margin-right: 10px;" />
+						</a>
+						<a href="/">
+							<h5 class="robe"><strong>Sublimation</strong></h5>
+						</a>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+						<div class="nav-item ml-auto">
+							<a href="Account/Manage" class="nav-link">
+								<span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Configuración
+							</a>
+						</div>
+						<div class="nav-item">
+							<a href="Account/Logout"
+								onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+								class="nav-link">
+								<span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+							</a>
+							<form id="logout-form" action="Account/Logout" method="post" style="display: none;">
+								<AntiforgeryToken />
+								<input type="hidden" name="ReturnUrl" value="@currentUrl" />
+							</form>
+						</div>
+					</Authorized>
+					<NotAuthorized>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+						<img src="Logo_.png" alt="Sublimation" style="width: 30px; height: auto; margin-right: 10px;" />
+
+
+						<h5 class="robe"><strong>Sublimation</strong></h5>
+						<div class="nav-item ml-auto">
+							<NavLink class="nav-link" href="Account/Register">
+								<span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
+							</NavLink>
+						</div>
+						<div class="nav-item">
+							<NavLink class="nav-link" href="Account/Login">
+								<span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
+							</NavLink>
+						</div>
+					</NotAuthorized>
+				</AuthorizeView>
+			</div>
+		</div>
+
+		<article class="content px-4">
+			@Body
+		</article>
+	</main>
 </div>
 
 <div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+	An unhandled error has occurred.
+	<a href="" class="reload">Reload</a>
+	<a class="dismiss">🗙</a>
 </div>
+
+<style>
+	.robe {
+		margin-top: 15px;
+	}
+
+	.page {
+		background-image: url(Menu/Fondo1.jpg);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		height: 100vh;
+	}
+
+	a {
+		font-family: 'Poppins', sans-serif;
+		font-weight: 600;/
+	}
+</style>
+
+@code {
+	private string? currentUrl;
+
+	protected override void OnInitialized()
+	{
+		currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+		NavigationManager.LocationChanged += OnLocationChanged;
+	}
+
+	private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+	{
+		currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		NavigationManager.LocationChanged -= OnLocationChanged;
+	}
+}
