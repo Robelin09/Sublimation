@@ -1,0 +1,63 @@
+﻿@page "/ViewSuplidor"
+@page "/ViewSuplidor/{SuplidorId:int}"
+@inject SuplidorService suplidorservice
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<div class="card">
+    <div class="card-header bg-primary text-light">
+        <h1 class="mb-0">Detalles del Suplidor</h1>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">ClienteId:</dt>
+            <dd class="col-sm-9">@suplidor.SuplidorId</dd>
+
+            <dt class="col-sm-3">Nombre:</dt>
+            <dd class="col-sm-9">@suplidor.Nombre</dd>
+
+            <dt class="col-sm-3">T&eacute;lefono:</dt>
+            <dd class="col-sm-9">@suplidor.Telefono</dd>
+
+            <dt class="col-sm-3">RNC:</dt>
+            <dd class="col-sm-9">@suplidor.RNC</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@suplidor.Email</dd>
+
+            <dt class="col-sm-3">Direcci&oacute;n:</dt>
+            <dd class="col-sm-9">@suplidor.Direccion</dd>
+
+            <dt class="col-sm-3">Fecha del Registro</dt>
+            <dd class="col-sm-9">@suplidor.FechaRegistro.ToString("dd/MM/yyyy")</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a href="/IndexSuplidor" class="btn btn-outline-primary bi bi bi-arrow-return-left"> Volver</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int SuplidorId { get; set; }
+    public Suplidores suplidor { get; set; } = new Suplidores();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (SuplidorId > 0)
+        {
+            suplidor.SuplidorId = SuplidorId;
+            await this.Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var suplidorEncontrado = await suplidorservice.Buscar(suplidor.SuplidorId);
+
+        if (suplidorEncontrado != null)
+        {
+            this.suplidor = suplidorEncontrado;
+        }
+    }
+}
