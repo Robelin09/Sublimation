@@ -2,6 +2,7 @@
 @page "/ViewSuplidor/{SuplidorId:int}"
 @inject SuplidorService suplidorservice
 @inject NavigationManager Navigation
+@attribute [Authorize]
 @rendermode InteractiveServer
 
 <div class="card">

@@ -2,6 +2,7 @@
 @page "/ViewInsumo/{InsumoId:int}"
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@attribute [Authorize]
 @inject InsumoService insumoService
 @inject NotificationService notificationService
 @inject SuplidorService suplidoreService

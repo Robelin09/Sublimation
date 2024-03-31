@@ -3,6 +3,7 @@
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject UsuarioService usuarioservice
+@attribute [Authorize]
 @inject DialogService dialogService
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
