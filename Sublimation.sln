@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sublimation", "Sublimation\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sublimation.Client", "Sublimation.Client\Sublimation.Client.csproj", "{FB65E07A-7FA1-4CEF-A35C-348C0A370D41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{8CA1ED68-8238-4A27-8539-4A911F4417DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Shared\Library.csproj", "{8CA1ED68-8238-4A27-8539-4A911F4417DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
