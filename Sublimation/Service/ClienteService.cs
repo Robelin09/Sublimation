@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 using Sublimation.DAL;
-using Sublimation.Extensor;
 using System.Linq.Expressions;
 
 
@@ -11,15 +10,9 @@ namespace Sublimation.Service
     public class ClienteService
     {
         private readonly Contexto _contexto;
-        private readonly NotificationService _notificationService;
         public ClienteService(Contexto contexto)
         {
             _contexto = contexto;
-        }
-        public ClienteService(Contexto contexto, NotificationService notificationService)
-        {
-            _contexto = contexto;
-            _notificationService = notificationService;
         }
         public async Task<bool> Existe(int ClienteId)
         {
@@ -38,16 +31,13 @@ namespace Sublimation.Service
             _contexto.Entry(clientes).State = EntityState.Modified;
             return await _contexto.SaveChangesAsync() > 0;
         }
+
+        public async Task<bool> ExisteCedula(string cedula)
+        {
+            return await _contexto.Clientes.AnyAsync(c => c.Cedula == cedula);          
+        }
         public async Task<bool> Guardar(Clientes clientes)
         {
-            if (await _contexto.Clientes.AnyAsync(m => m.Cedula == clientes.Cedula))
-            {
-                _notificationService.ShowNotification(
-               titulo: "Error",
-               mensaje: "Esta cédula ya ha sido registrada",
-               NotificationSeverity.Error);
-                return false;
-            }
             if (!await Existe(clientes.ClienteId))
                 return await Insertar(clientes);
             else

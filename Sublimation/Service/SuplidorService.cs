@@ -29,6 +29,10 @@ public class SuplidorService
         _contexto.Entry(Suplidor).State = EntityState.Modified;
         return await _contexto.SaveChangesAsync() > 0;
     }
+    public async Task<bool> ExisteRNC(string RNC)
+    {
+        return await _contexto.Suplidores.AnyAsync(c => c.RNC == RNC);
+    }
     public async Task<bool> Guardar(Suplidores Suplidor)
     {
         if (!await Existe(Suplidor.SuplidorId))

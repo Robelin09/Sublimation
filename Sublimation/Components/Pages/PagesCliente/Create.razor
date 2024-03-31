@@ -86,24 +86,35 @@
     }
     public async Task Guardar()
     {
-
-        var guardo = await clienteservice.Guardar(cliente);
-        if (guardo)
-        {
-            notificationService.ShowNotification(
-            titulo: "Exito",
-            mensaje: "Guardado correctamente",
-            NotificationSeverity.Success);
-
-            await Task.Delay(3000);
-            Atras();
-        }
-        else
+        bool cedulaExiste = await clienteservice.ExisteCedula(cliente.Cedula);
+        if (cedulaExiste)
         {
             notificationService.ShowNotification(
             titulo: "Error",
-            mensaje: "Ocurrio un error y no fue posible guardar",
+            mensaje: "La cédula ya está registrada en el sistema. No es posible guardar el cliente.",
             NotificationSeverity.Error);
+            return;
+        }
+        else
+        {
+            var guardo = await clienteservice.Guardar(cliente);
+            if (guardo)
+            {
+                notificationService.ShowNotification(
+                titulo: "Exito",
+                mensaje: "Guardado correctamente",
+                NotificationSeverity.Success);
+
+                await Task.Delay(3000);
+                Atras();
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Ocurrio un error y no fue posible guardar",
+                NotificationSeverity.Error);
+            }
         }
     }
     void Atras()
