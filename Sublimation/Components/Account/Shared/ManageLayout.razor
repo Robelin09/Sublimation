@@ -1,17 +1,22 @@
 ﻿@inherits LayoutComponentBase
 @layout AccountLayout
 
-<h1>Manage your account</h1>
+<div class="container mt-5">
+    <div class="card p-4">
+        <h1 class="mb-4">Gestiona tu cuenta</h1>
 
-<div>
-    <h2>Change your account settings</h2>
-    <hr />
-    <div class="row">
-        <div class="col-md-3">
-            <ManageNavMenu />
-        </div>
-        <div class="col-md-9">
-            @Body
+        <h2 class="mb-3">Cambia la configuración de tu cuenta</h2>
+        <hr />
+
+        <div class="row">
+            <div class="col-md-3 bg-light">
+                <ManageNavMenu />
+            </div>
+            <div class="col-md-9">
+                <div class="card-body">
+                    @Body
+                </div>
+            </div>
         </div>
     </div>
 </div>
