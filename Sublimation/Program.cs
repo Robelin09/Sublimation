@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using Sublimation.Client.Pages;
 using Sublimation.Components;
 using Sublimation.Components.Account;
@@ -24,7 +25,7 @@ namespace Sublimation
             builder.Services.AddScoped<IdentityUserAccessor>();
             builder.Services.AddScoped<IdentityRedirectManager>();
             builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
-
+            builder.Services.AddRadzenComponents();
             builder.Services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = IdentityConstants.ApplicationScheme;
