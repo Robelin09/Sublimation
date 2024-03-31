@@ -1,7 +1,129 @@
 ﻿@page "/"
 
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+@attribute [Authorize]
 <PageTitle>Home</PageTitle>
+<AuthorizeView>
+    <Authorized>
 
-<h1>Hello, world!</h1>
+        <div class="card mx-auto shadow-lg" style="max-width:1000px">
+            <div class="card-header d-flex align-items-center justify-content-center">
+                <img src="Logo_.png" class="img-logo" />
+                <h2>Sublimation - Menú Principal</h2>
+            </div>
+            <div class="card-body" style="background-color: #ffff; background-size: cover;">
+                <div class="row justify-content-center">
+                    <div class="col-md-4 text-center">
+                        <a href="/IndexVenta">
+                            <div class="menu-item">
+                                <img src="Icons/Venta.png" class="icon" />
+                                <p>Ventas</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <a href="/IndexCliente">
+                            <div class="menu-item">
+                                <img src="Icons/Clientes.png" class="icon" />
+                                <p>Clientes</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center mb-4">
+                        <a href="/IndexServicio">
+                            <div class="menu-item">
+                                <img src="Icons/Servicio.png" class="icon" />
+                                <p>Servicios</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <a href="/IndexUsuario">
+                            <div class="menu-item">
+                                <img src="Icons/Empleado.png" class="icon" />
+                                <p>Usuarios</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <a href="/IndexCompra">
+                            <div class="menu-item">
+                                <img src="Icons/Compra.png" class="icon" />
+                                <p>Compras</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center mb-4">
+                        <a href="/IndexReclamo">
+                            <div class="menu-item">
+                                <img src="Icons/Reclamos.png" class="icon" />
+                                <p>Reclamos</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <a href="/IndexInsumo">
+                            <div class="menu-item">
+                                <img src="Icons/Inventario.png" class="icon" />
+                                <p>Insumos</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <a href="/IndexSuplidor">
+                            <div class="menu-item">
+                                <img src="Icons/Suplidor.png" class="icon" />
+                                <p>Suplidores</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Debes iniciar sesión para acceder a esta página.</h1>
+    </NotAuthorized>
+</AuthorizeView>
 
-Welcome to your new app.
+
+<style>
+    .menu-item {
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        padding: 10px;
+        transition: background-color 0.3s ease, transform 0.2s ease; /* Agregamos transform al transition */
+        background-color: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente para los cuadros */
+    }
+
+        .menu-item:hover {
+            background-color: #f8f9fa;
+            transform: scale(0.95); /* Encoge el elemento al 95% de su tamaño original al pasar el mouse */
+        }
+
+        .menu-item:active {
+            transform: scale(1); /* Retorna al tamaño original al hacer click */
+        }
+
+        .menu-item img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+
+        .menu-item p {
+            margin: 0;
+        }
+
+    .img-logo {
+        max-width: 50px; /* Establece un ancho máximo para la imagen del logo */
+        height: auto; /* Permite que la altura se ajuste automáticamente para mantener la proporción de la imagen */
+    }
+
+    a, a:hover, a:focus, a:active {
+        text-decoration: none; /* Quita el subrayado */
+        color: #001B97; /* Asegúrate de que el color de los enlaces se ajuste a tu diseño */
+    }
+</style>
