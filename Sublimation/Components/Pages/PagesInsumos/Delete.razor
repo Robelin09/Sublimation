@@ -38,8 +38,7 @@
     </div>
     <div class="card-footer">
         <a href="/IndexInsumo" class="btn btn-outline-primary bi bi bi-arrow-return-left"> Volver</a>
-        <button type="button" class="btn btn-outline-danger" @onclick="MostrarDialogoEliminar">Eliminar</button>
-
+        <button type="button" class="btn btn-outline-danger bi bi-trash" @onclick="MostrarDialogoEliminar">Eliminar</button>
     </div>
 </div>
 
@@ -99,6 +98,6 @@
 
     void Atras()
     {
-        Navigation.NavigateTo("/IndexCliente");
+        Navigation.NavigateTo("/IndexInsumos");
     }
 }
