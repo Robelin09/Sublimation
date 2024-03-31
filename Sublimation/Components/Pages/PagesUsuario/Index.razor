@@ -1,0 +1,155 @@
+﻿@page "/IndexUsuario"
+@page "/IndexUsuario/{UsuarioId:int}"
+@inject UsuarioService usuarioservice
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<PageTitle>Detalles de Usuarios</PageTitle>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Detalles de Usuarios</h3>
+        <a href="/CreateUsuario" class="btn btn-outline-primary bi bi-plus-square">  Crear</a>
+    </div>
+    <div class="card-body">
+
+        <div class="input-group-text">
+
+            <label class="form-control-label col-1">Desde:</label>
+            <div class="col-3">
+                <input class="form-control" type="date" @bind="Desde" />
+            </div>
+
+            <label class="form-control-label col-1">Hasta:</label>
+            <div class="col-3">
+                <input class="form-control" type="date" @bind="Hasta" />
+            </div>
+
+            <div class="col-5">
+                <button type="button" @onclick="Buscar" class="btn btn-primary  ">
+                    <i class="bi bi-search" />
+                    <br /> Buscar
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <label>Filtrar Por</label>
+                <InputSelect @bind-Value="Opcion" class="form-select">
+                    <option value="0" selected disabled>Seleccione</option>
+                    <option value="1">Usuario Id</option>
+                    <option value="2">Nombre</option>
+                </InputSelect>
+            </div>
+
+            @if (Opcion == 1)
+            {
+                <div class="col-3">
+                    <label>ID</label>
+                    <div class="input-group">
+                        <InputNumber @bind-Value="UsuariosId" class="form-control"></InputNumber>
+                    </div>
+                </div>
+            }
+            else if (Opcion == 2)
+            {
+                <div class="col-3">
+                    <label>Nombre</label>
+                    <div class="input-group">
+                        <InputText @bind-Value="Nombre" class="form-control"></InputText>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center">ID</th>
+                    <th scope="col" class="text-center">Nombre</th>
+                    <th scope="col" class="text-center">T&eacutelefono</th>
+                    <th scope="col" class="text-center">C&eacute;dula</th>
+                    <th scope="col" class="text-center">Email</th>
+                    <th scope="col" class="text-center">Cargo</th>
+                    <th scope="col" class="text-center">Direcci&oacuten</th>
+                    <th scope="col" class="text-center">Fecha</th>
+                    <th scope="col" class="text-center">Editar</th>
+                    <th scope="col" class="text-center">Eliminar</th>
+                    <th scope="col" class="text-center">Ver</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var usuario in ListaUsuarios)
+                {
+                    <tr>
+                        <td class="text-center">@usuario.UsuarioId</td>
+                        <td class="text-center">@usuario.Nombre</td>
+                        <td class="text-center">@usuario.Telefono</td>
+                        <td class="text-center">@usuario.Cedula</td>
+                        <td class="text-center">@usuario.Email</td>
+                        <td class="text-center">@usuario.Cargo</td>
+                        <td class="text-center">@usuario.Direccion</td>
+                        <td class="text-center">@usuario.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center"><a href="/EditUsuario/@usuario.UsuarioId" class="bi bi-pencil-square"></a></td>
+                        <td class="text-center"><a href="/DeleteUsuario/@usuario.UsuarioId" class="bi bi-trash"></a></td>
+                        <td class="text-center"><a href="/ViewUsuario/@usuario.UsuarioId" class="bi bi-eye"></a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="card-footer fw-bold">
+            <p>Cantidad de Empleados: @ListaUsuarios.Count</p>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a href="/" class="btn btn-outline-danger bi bi-house-door-fill"> Volver</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int UsuarioId { get; set; }
+    public Usuarios usuario { get; set; } = new Usuarios();
+    public List<Usuarios> ListaUsuarios { get; set; } = new List<Usuarios>();
+    public int UsuariosId { get; set; }
+    public string Nombre { get; set; }
+    public int Opcion = 0;
+    public DateTime Desde { get; set; }
+    public DateTime Hasta { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaUsuarios = await usuarioservice.Listar(t => true);
+        Desde = DateTime.Now.AddMonths(-1);
+        Hasta = DateTime.Now;
+    }
+    public async Task Buscar()
+    {
+        Hasta = new DateTime(Hasta.Year, Hasta.Month, Hasta.Day, 23, 59, 59);
+        if (Opcion == 0)
+        {
+            ListaUsuarios = await usuarioservice.Listar(t => t.FechaRegistro >= Desde && t.FechaRegistro <= Hasta);
+        }
+        if (Opcion == 1)
+        {
+            if (UsuariosId <= 0)
+                ListaUsuarios = await usuarioservice.Listar(t => true);
+            else
+                ListaUsuarios = await usuarioservice.Listar(t => t.UsuarioId == UsuariosId && t.FechaRegistro >= Desde && t.FechaRegistro <= Hasta);
+        }
+        if (Opcion == 2)
+        {
+            if (string.IsNullOrEmpty(Nombre))
+            {
+                ListaUsuarios = await usuarioservice.Listar(t => true);
+            }
+            else
+            {
+                ListaUsuarios = await usuarioservice.Listar(t => t.Nombre.ToLower().Contains(Nombre.ToLower()) && t.FechaRegistro >= Desde && t.FechaRegistro <= Hasta);
+            }
+        }
+    }
+}
