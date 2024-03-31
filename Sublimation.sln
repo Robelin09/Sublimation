@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sublimation", "Sublimation\Sublimation.csproj", "{9929090B-38E4-4673-AAB2-8C3B61995F8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sublimation.Client", "Sublimation.Client\Sublimation.Client.csproj", "{FB65E07A-7FA1-4CEF-A35C-348C0A370D41}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9929090B-38E4-4673-AAB2-8C3B61995F8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9929090B-38E4-4673-AAB2-8C3B61995F8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9929090B-38E4-4673-AAB2-8C3B61995F8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9929090B-38E4-4673-AAB2-8C3B61995F8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB65E07A-7FA1-4CEF-A35C-348C0A370D41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB65E07A-7FA1-4CEF-A35C-348C0A370D41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB65E07A-7FA1-4CEF-A35C-348C0A370D41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB65E07A-7FA1-4CEF-A35C-348C0A370D41}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BD54F6ED-9A76-44DB-9E87-617452F37C62}
+	EndGlobalSection
+EndGlobal
