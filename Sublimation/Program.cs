@@ -7,6 +7,7 @@ using Sublimation.Components;
 using Sublimation.Components.Account;
 using Sublimation.DAL;
 using Sublimation.Data;
+using Sublimation.Service;
 
 namespace Sublimation
 {
@@ -38,11 +39,17 @@ namespace Sublimation
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-
             var ConStr = builder.Configuration.GetConnectionString("ConStr");
             builder.Services.AddDbContext<Contexto>(op => op.UseSqlite(ConStr));
 
-
+            builder.Services.AddScoped<ClienteService>();
+            builder.Services.AddScoped<VentaService>();
+            builder.Services.AddScoped<ReclamoService>();
+            builder.Services.AddScoped<CompraService>();
+            builder.Services.AddScoped<InsumoService>();
+            builder.Services.AddScoped<SuplidorService>();
+            builder.Services.AddScoped<ServicioService>();
+            builder.Services.AddScoped<UsuarioService>();
 
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
