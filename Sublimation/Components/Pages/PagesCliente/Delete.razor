@@ -1,0 +1,98 @@
+﻿@page "/DeleteCliente"
+@page "/DeleteCliente/{ClienteId:int}"
+@inject ClienteService clienteservice
+@inject NavigationManager Navigation
+@inject DialogService dialogService
+@rendermode InteractiveServer
+<RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
+<RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
+
+<PageTitle>Eliminar Cliente</PageTitle>
+
+<div class="card">
+    <div class="card-header bg-danger text-light">
+        <h1 class="mb-0">¿Desea Eliminar este Cliente?</h1>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Detalles del Cliente</h5>
+        <dl class="row">
+            <dt class="col-sm-3">ClienteId:</dt>
+            <dd class="col-sm-9">@cliente.ClienteId</dd>
+
+            <dt class="col-sm-3">Nombre:</dt>
+            <dd class="col-sm-9">@cliente.Nombre</dd>
+
+            <dt class="col-sm-3">T&eacute;lefono:</dt>
+            <dd class="col-sm-9">@cliente.Telefono</dd>
+
+            <dt class="col-sm-3">C&eacute;dula:</dt>
+            <dd class="col-sm-9">@cliente.Cedula</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@cliente.Email</dd>
+
+            <dt class="col-sm-3">Direcci&oacute;n:</dt>
+            <dd class="col-sm-9">@cliente.Direccion</dd>
+
+            <dt class="col-sm-3">Fecha del Registro</dt>
+            <dd class="col-sm-9">@cliente.FechaRegistro.ToString("dd/MM/yyyy")</dd>
+
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a href="/IndexCliente" class="btn btn-outline-primary bi bi bi-arrow-return-left"> Volver</a>
+        <button type="button" class="btn btn-outline-danger" @onclick="MostrarDialogoEliminar">Eliminar</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int ClienteId { get; set; }
+    public Clientes cliente { get; set; } = new Clientes();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ClienteId > 0)
+        {
+            cliente.ClienteId = ClienteId;
+            await this.Buscar();
+        }
+    }
+    public async Task Buscar()
+    {
+        var clienteEncontrado = await clienteservice.Buscar(cliente.ClienteId);
+
+        if (clienteEncontrado != null)
+        {
+            this.cliente = clienteEncontrado;
+        }
+    }
+    public async Task MostrarDialogoEliminar()
+    {
+        var result = await dialogService.Confirm("¿Está seguro que desea eliminar este cliente?", "Confirmar eliminación");
+
+        if (result.GetValueOrDefault())
+        {
+            await Eliminar();
+        }
+    }
+    public async Task Eliminar()
+    {
+        if (!await clienteservice.Existe(cliente.ClienteId))
+        {
+            return;
+        }
+        if (await clienteservice.Eliminar(this.cliente))
+        {
+            Atras();
+        }
+    }
+    void Atras()
+    {
+        Navigation.NavigateTo("/IndexCliente");
+    }
+}
+
+
+
+
