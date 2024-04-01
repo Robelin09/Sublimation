@@ -70,7 +70,7 @@
                 <tr>
                     <th scope="col" class="text-center">ID</th>
                     <th scope="col" class="text-center">Nombre</th>
-                    <th scope="col" class="text-center">T&eacutelefono</th>
+                    <th scope="col" class="text-center">Tel&eacute;fono</th>
                     <th scope="col" class="text-center">C&eacute;dula</th>
                     <th scope="col" class="text-center">Email</th>
                     <th scope="col" class="text-center">Cargo</th>
@@ -88,8 +88,8 @@
                     <tr>
                         <td class="text-center">@usuario.UsuarioId</td>
                         <td class="text-center">@usuario.Nombre</td>
-                        <td class="text-center">@usuario.Telefono</td>
-                        <td class="text-center">@usuario.Cedula</td>
+                        <td class="text-center">@string.Format("{0:(###) ###-####}", long.Parse(usuario.Telefono))</td>
+                        <td class="text-center">@string.Format("{0:###-#######-#}", long.Parse(usuario.Cedula))</td>
                         <td class="text-center">@usuario.Email</td>
                         <td class="text-center">@usuario.Cargo</td>
                         <td class="text-center">@usuario.Direccion</td>

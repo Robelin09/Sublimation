@@ -23,11 +23,11 @@
             <dt class="col-sm-3">Nombre:</dt>
             <dd class="col-sm-9">@cliente.Nombre</dd>
 
-            <dt class="col-sm-3">T&eacute;lefono:</dt>
-            <dd class="col-sm-9">@cliente.Telefono</dd>
+            <dt class="col-sm-3">Tel&eacute;fono:</dt>
+            <dd class="col-sm-9">@string.Format("{0:(###) ###-####}", long.Parse(cliente.Telefono))</dd>
 
             <dt class="col-sm-3">C&eacute;dula:</dt>
-            <dd class="col-sm-9">@cliente.Cedula</dd>
+            <dd class="col-sm-9">@string.Format("{0:###-#######-#}", long.Parse(cliente.Cedula))</dd>
 
             <dt class="col-sm-3">Email:</dt>
             <dd class="col-sm-9">@cliente.Email</dd>
@@ -35,7 +35,7 @@
             <dt class="col-sm-3">Direcci&oacute;n:</dt>
             <dd class="col-sm-9">@cliente.Direccion</dd>
 
-            <dt class="col-sm-3">Fecha del Registro</dt>
+            <dt class="col-sm-3">Fecha del Registro:</dt>
             <dd class="col-sm-9">@cliente.FechaRegistro.ToString("dd/MM/yyyy")</dd>
 
         </dl>

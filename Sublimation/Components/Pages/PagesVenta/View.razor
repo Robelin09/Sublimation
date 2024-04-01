@@ -49,7 +49,7 @@
                 @foreach (var detalle in ListaDetalleVenta)
                 {
                     <tr>
-                        <td>@detalle.FechaEstimadaEntrega</td>
+                        <td>@detalle.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</td>
                         <td>@detalle.Direccion</td>
                         <td>@detalle.ServicioGrua</td>
                         <td>@detalle.Instalacion</td>

@@ -22,6 +22,7 @@
                     <div class="col col-4">
                         <label>Suplidor Id:</label>
                         <InputSelect @bind-Value="compra.SuplidorId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaSuplidores)
                             {
                                 <option value="@item.SuplidorId">@item.Nombre</option>
@@ -32,6 +33,7 @@
                     <div class="col col-4">
                         <label>Usuario Id:</label>
                         <InputSelect @bind-Value="compra.UsuarioId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaUsuarios)
                             {
                                 <option value="@item.UsuarioId">@item.Nombre</option>
@@ -64,6 +66,7 @@
                     <div class="col col-6">
                         <label>Insumo:</label>
                         <InputSelect @bind-Value="detalle.InsumoId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaInsumos)
                             {
                                 <option value="@item.InsumosId">@item.NombreInsumo</option>
@@ -85,7 +88,7 @@
                 <table class='table table-bordered table-hover'>
                     <thead>
                         <tr>
-                            <th>Nombre Articulo</th>
+                            <th>Nombre del Insumo</th>
                             <th>Cantidad</th>
                             <th>Precio</th>
                         </tr>
@@ -96,7 +99,7 @@
                             <tr>
                                 <td>@detalle.InsumoId</td>
                                 <td>@detalle.Cantidad</td>
-                                <td>@detalle.Precio</td>
+                                <td>@detalle.Precio.ToString("N2")</td>
                                 <td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
                             </tr>
                         }

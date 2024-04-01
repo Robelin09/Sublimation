@@ -67,7 +67,7 @@
                     <th scope="col" class="text-center">ID</th>
                     <th scope="col" class="text-center">Nombre</th>
                     <th scope="col" class="text-center">RNC</th>
-                    <th scope="col" class="text-center">T&eacute;lefono</th>
+                    <th scope="col" class="text-center">Tel&eacute;fono</th>
                     <th scope="col" class="text-center">Email</th>
                     <th scope="col" class="text-center">Direcci&oacute;n</th>
                     <th scope="col" class="text-center">Fecha Registro</th>
@@ -84,7 +84,7 @@
                         <td class="text-center">@suplidor.SuplidorId</td>
                         <td class="text-center">@suplidor.Nombre</td>
                         <td class="text-center">@suplidor.RNC</td>
-                        <td class="text-center">@suplidor.Telefono</td>
+                        <td class="text-center">@string.Format("{0:(###) ###-####}", long.Parse(suplidor.Telefono))</td>
                         <td class="text-center">@suplidor.Email</td>
                         <td class="text-center">@suplidor.Direccion</td>
                         <td class="text-center">@suplidor.FechaRegistro.ToString("dd/MM/yyyy")</td>

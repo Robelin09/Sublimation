@@ -21,6 +21,7 @@
                 <div class="col col-4">
                     <label>Suplidor:</label>
                     <InputSelect @bind-Value="insumo.SuplidorId" class="form-select">
+                        <option value="0" selected disabled>Seleccione...</option>
                         @foreach (var item in listaSuplidores)
                         {
                             <option value="@item.SuplidorId">@item.Nombre</option>

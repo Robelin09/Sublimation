@@ -23,11 +23,11 @@
             <dt class="col-sm-3">Nombres:</dt>
             <dd class="col-sm-9">@usuario.Nombre</dd>
 
-            <dt class="col-sm-3">T&eacute;lefono:</dt>
-            <dd class="col-sm-9">@usuario.Telefono</dd>
+            <dt class="col-sm-3">Tel&eacute;fono:</dt>
+            <dd class="col-sm-9">@string.Format("{0:(###) ###-####}", long.Parse(usuario.Telefono))</dd>
 
             <dt class="col-sm-3">C&eacute;dula:</dt>
-            <dd class="col-sm-9">@usuario.Cedula</dd>
+            <dd class="col-sm-9">@string.Format("{0:###-#######-#}", long.Parse(usuario.Cedula))</dd>
 
             <dt class="col-sm-3">Direcci&oacute;n:</dt>
             <dd class="col-sm-9">@usuario.Direccion</dd>

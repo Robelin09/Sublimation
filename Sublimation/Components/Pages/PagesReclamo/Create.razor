@@ -26,6 +26,7 @@
                     <div class="col col-6">
                         <label>Venta Id a Reclamar:</label>
                         <InputSelect @bind-Value="reclamo.VentaId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaVenta)
                             {
                                 <option value="@item.VentaId">@item.VentaId</option>
@@ -36,6 +37,7 @@
                     <div class="col col-6">
                         <label>Cliente a Reclamar:</label>
                         <InputSelect @bind-Value="reclamo.ClienteId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaCliente)
                             {
                                 <option value="@item.ClienteId">@item.Nombre</option>

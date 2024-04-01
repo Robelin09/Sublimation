@@ -21,16 +21,17 @@
                 <ValidationMessage For="(() => usuario.UsuarioId)"></ValidationMessage>
                 </div> *@
                 <div class="col col-6">
+                    <label>Nombre:</label>
+                    <InputText @bind-Value="usuario.Nombre" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => usuario.Nombre)" />
+                </div>
+                <div class="col col-6">
                     <label>Fecha:</label>
                     <InputDate @bind-Value="usuario.FechaRegistro" class="form-control"></InputDate>
                     <ValidationMessage For="(() => usuario.FechaRegistro)"></ValidationMessage>
                 </div>
             </div>
-            <div>
-                <label>Nombre:</label>
-                <InputText @bind-Value="usuario.Nombre" class="form-control"></InputText>
-                <ValidationMessage For="@(() => usuario.Nombre)" />
-            </div>
+          
             <div class="row">
                 <div class="col col-6">
                     <label>C&eacute;dula:</label>
@@ -38,7 +39,7 @@
                     <ValidationMessage For="(() => usuario.Cedula)"></ValidationMessage>
                 </div>
                 <div class="col col-6">
-                    <label>T&eacutelefono:</label>
+                    <label>Tel&eacute;fono:</label>
                     <InputText @bind-Value="usuario.Telefono" class="form-control"></InputText>
                     <ValidationMessage For="(() => usuario.Telefono)"></ValidationMessage>
                 </div>

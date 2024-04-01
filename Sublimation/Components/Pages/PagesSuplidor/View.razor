@@ -17,8 +17,8 @@
             <dt class="col-sm-3">Nombre:</dt>
             <dd class="col-sm-9">@suplidor.Nombre</dd>
 
-            <dt class="col-sm-3">T&eacute;lefono:</dt>
-            <dd class="col-sm-9">@suplidor.Telefono</dd>
+            <dt class="col-sm-3">Tel&eacute;fono:</dt>
+            <dd class="col-sm-9">@string.Format("{0:(###) ###-####}", long.Parse(suplidor.Telefono))</dd>
 
             <dt class="col-sm-3">RNC:</dt>
             <dd class="col-sm-9">@suplidor.RNC</dd>

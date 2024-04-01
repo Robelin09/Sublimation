@@ -23,6 +23,7 @@
                     <div class="col col-4">
                         <label>Cliente:</label>
                         <InputSelect @bind-Value="venta.ClienteId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaClientes)
                             {
                                 <option value="@item.ClienteId">@item.Nombre</option>
@@ -40,6 +41,7 @@
                     <div class="col col-4">
                         <label>Usuario:</label>
                         <InputSelect @bind-Value="venta.UsuarioId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaUsuarios)
                             {
                                 <option value="@item.UsuarioId">@item.Nombre</option>
@@ -50,6 +52,7 @@
                     <div class="col col-4">
                         <label>Servicio:</label>
                         <InputSelect @bind-Value="venta.ServicioId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaServicios)
                             {
                                 <option value="@item.ServicioId">@item.TipoServicio</option>
@@ -116,11 +119,11 @@
                         @foreach (var detalle in venta.VentasDetalle)
                         {
                             <tr>
-                                <td>@detalle.FechaEstimadaEntrega</td>
+                                <td>@detalle.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</td>
                                 <td>@detalle.Direccion</td>
                                 <td>@detalle.ServicioGrua</td>
                                 <td>@detalle.Instalacion</td>
-                                <td>@detalle.Costo</td>
+                                <td>@detalle.Costo.ToString("N2")</td>
                                 <td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
 
                             </tr>
