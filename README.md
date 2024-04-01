@@ -8,9 +8,9 @@ Sublimation es un sistema de ventas de servicios de Sublimación, impresión y p
 
 ## Características principales:
 
-**Registrar Clientes:** Permite que cada Cliente tenga un perfil
-**Ingresar Servicios:** Permite registrar los servicios que ofrecerás
-**Edición y eliminación:** Permite el editar y eliminar todo tipo de datos ya registrados
+- **Registrar Clientes:** Permite que cada Cliente tenga un perfil 
+- **Ingresar Servicios:** Permite registrar los servicios que ofrecerás
+- **Edición y eliminación:** Permite el editar y eliminar todo tipo de datos ya registrados
 
 ## Imagenes del Sistema
 
