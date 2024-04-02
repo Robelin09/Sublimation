@@ -43,6 +43,7 @@
                     </div>
                 </div>
                 <div class="row">
+
                     <div class="col col-4">
                         <label>Fecha Compra:</label>
                         <InputDate @bind-Value="compra.FechaCompra" class="form-control"></InputDate>
@@ -127,6 +128,7 @@
     public List<Suplidores> listaSuplidores = new List<Suplidores>();
     public List<Insumos> listaInsumos = new List<Insumos>();
 
+
     protected override async Task OnInitializedAsync()
     {
         listaUsuarios = await usuarioservice.Listar(t => true);
@@ -156,6 +158,7 @@
                 return;
             }
         }
+
         var guardo = await compraservice.Guardar(compra);
         if (guardo)
         {
@@ -163,6 +166,17 @@
             titulo: "Exito",
             mensaje: "Guardado correctamente",
             NotificationSeverity.Success);
+            listaInsumos = await insumoService.Listar(t => true);
+
+            foreach (var DetalleAgregado in compra.ComprasDetalle)
+            {
+                var insumo = listaInsumos.FirstOrDefault(I => I.InsumosId == DetalleAgregado.InsumoId);
+                if (insumo != null)
+                {
+                    insumo.Cantidad += DetalleAgregado.Cantidad;
+                    await insumoService.Guardar(insumo);
+                }
+            }
 
             await Task.Delay(3000);
             Navigation.NavigateTo("/IndexCompra");
@@ -178,7 +192,18 @@
 
     public void AgregarDetalle()
     {
-
+        if (detalle.InsumoId == 0)
+        {
+            return;
+        }
+        if (compra.ComprasDetalle.Any(cd => cd.InsumoId == detalle.InsumoId))
+        {
+            return;
+        }
+        if (detalle.Cantidad > listaInsumos.FirstOrDefault(I => I.InsumosId == detalle.InsumoId).Cantidad)
+        {
+            return;
+        }
         if (detalle.Cantidad > 0 && detalle.Precio > 0)
         {
             compra.ComprasDetalle.Add(detalle);
@@ -198,6 +223,5 @@
     {
         detalle = details;
         compra.ComprasDetalle.Remove(details);
-
     }
 }

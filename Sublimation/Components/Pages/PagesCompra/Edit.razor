@@ -135,6 +135,9 @@
     public List<ComprasDetalle> ListaDetalles = new List<ComprasDetalle>();
     public List<Usuarios> listaUsuarios = new List<Usuarios>();
     public List<Suplidores> listaSuplidores = new List<Suplidores>();
+    public List<ComprasDetalle> DetallesAgregado { get; set; } = new List<ComprasDetalle>();
+    public List<ComprasDetalle> DetallesEliminado { get; set; } = new List<ComprasDetalle>();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -190,6 +193,30 @@
             mensaje: "Guardado correctamente",
             NotificationSeverity.Success);
 
+            foreach (var DetalleAgregado in DetallesAgregado)
+            {
+                var insumo = listaInsumos.FirstOrDefault(I => I.InsumosId == DetalleAgregado.InsumoId);
+                if (insumo != null)
+                {
+                    insumo.Cantidad += DetalleAgregado.Cantidad;
+                    await insumoService.Guardar(insumo);
+                }
+            }
+
+            foreach (var DetalleEliminado in DetallesEliminado)
+            {
+                var insumo = listaInsumos.FirstOrDefault(I => I.InsumosId == DetalleEliminado.InsumoId);
+                if (insumo != null)
+                {
+                    insumo.Cantidad -= DetalleEliminado.Cantidad;
+                    await insumoService.Guardar(insumo);
+                }
+            }
+
+            DetallesAgregado = new List<ComprasDetalle>();
+            DetallesEliminado = new List<ComprasDetalle>();
+
+
             await Task.Delay(3000);
             Navigation.NavigateTo("/IndexCompra");
         }
@@ -204,9 +231,22 @@
 
     public void AgregarDetalle()
     {
+        if (detalle.InsumoId == 0)
+        {
+            return;
+        }
+        if (compra.ComprasDetalle.Any(cd => cd.InsumoId == detalle.InsumoId))
+        {
+            return;
+        }
+        if (detalle.Cantidad > listaInsumos.FirstOrDefault(I => I.InsumosId == detalle.InsumoId).Cantidad)
+        {
+            return;
+        }
         if (detalle.Cantidad > 0 && detalle.Precio > 0)
         {
             compra.ComprasDetalle.Add(detalle);
+            DetallesAgregado.Add(detalle);
             detalle = new ComprasDetalle();
 
         }
@@ -223,5 +263,6 @@
     {
         detalle = details;
         compra.ComprasDetalle.Remove(details);
+        DetallesEliminado.Add(details);
     }
 }
