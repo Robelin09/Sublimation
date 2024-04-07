@@ -37,6 +37,7 @@
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Nombre del Insumo</th>
                     <th>Cantidad</th>
                 </tr>
@@ -45,6 +46,10 @@
                 @foreach (var detalle in ListaDetalleCompras)
                 {
                     <tr>
+                        @if (!string.IsNullOrEmpty(detalle.ImagenURL))
+                        {
+                            <img src="@detalle.ImagenURL" alt="Imagen del Insumo" style="max-width: 60px; max-height: 60px;">
+                        }
                         <td>@ObtenerNombreInsumo(detalle.InsumoId)</td>
                         <td>@detalle.Cantidad</td>
                     </tr>
