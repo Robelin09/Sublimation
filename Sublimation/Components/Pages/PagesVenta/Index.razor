@@ -63,7 +63,7 @@
                     <th scope="col" class="text-center">Fecha Registro</th>
                     <th scope="col" class="text-center">Cliente</th>
                     <th scope="col" class="text-center">Usuario</th>
-                    <th scope="col" class="text-center">Tipo de Servicio</th>
+                    <th scope="col" class="text-center">Direcci&oacute;n</th>
                     <th scope="col" class="text-center">Monto Total</th>
                     <th scope="col" class="text-center">Editar</th>
                     <th scope="col" class="text-center">Eliminar</th>
@@ -78,7 +78,7 @@
                         <td class="text-center">@venta.FechaRegistro.ToString("dd/MM/yyyy")</td>
                         <td class="text-center">@ObtenerNombreCliente(venta.ClienteId)</td>
                         <td class="text-center">@ObtenerNombreUsuario(venta.UsuarioId)</td>
-                        <td class="text-center">@ObtenerServicio(venta.ServicioId)</td>
+                        <td class="text-center">@venta.Direccion</td>
                         <td class="text-center">@venta.MontoTotal.ToString("N2")</td>
                         <td class="text-center"><a href="/EditVenta/@venta.VentaId" class="bi bi-pencil-square"></a></td>
                         <td class="text-center"><a href="/DeleteVenta/@venta.VentaId" class="bi bi-trash"></a></td>
@@ -112,14 +112,14 @@
     public DateTime Hasta { get; set; }
     public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
     public List<Usuarios> ListaUsuarios { get; set; } = new List<Usuarios>();
-    public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
+    // public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
 
     protected override async Task OnInitializedAsync()
     {
         ListaVentas = await ventaservice.Listar(t => true);
         ListaClientes = await clienteservice.Listar(t => true);
         ListaUsuarios = await usuarioservice.Listar(t => true);
-        ListaServicios = await servicioservice.Listar(t => true);
+        // ListaServicios = await servicioservice.Listar(t => true);
         Desde = DateTime.Now.AddMonths(-1);
         Hasta = DateTime.Now;
         TotalVentas = ListaVentas.Sum(v => v.MontoTotal);
@@ -135,11 +135,11 @@
         var Nombre = ListaUsuarios.FirstOrDefault(c => c.UsuarioId == usuario);
         return Nombre != null ? Nombre.Nombre : string.Empty;
     }
-    public string ObtenerServicio(int servicio)
-    {
-        var Nombre = ListaServicios.FirstOrDefault(c => c.ServicioId == servicio);
-        return Nombre != null ? Nombre.TipoServicio : string.Empty;
-    }
+    // public string ObtenerServicio(int servicio)
+    // {
+    //     var Nombre = ListaServicios.FirstOrDefault(c => c.ServicioId == servicio);
+    //     return Nombre != null ? Nombre.TipoServicio : string.Empty;
+    // }
     public async Task Buscar()
     {
         Hasta = new DateTime(Hasta.Year, Hasta.Month, Hasta.Day, 23, 59, 59);

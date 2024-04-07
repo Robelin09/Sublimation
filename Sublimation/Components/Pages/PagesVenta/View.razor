@@ -16,6 +16,7 @@
     </div>
     <div class="card-body">
         <dl class="row">
+
             <dt class="col-sm-3">VentaId:</dt>
             <dd class="col-sm-9">@venta.VentaId</dd>
 
@@ -28,21 +29,22 @@
             <dt class="col-sm-3">Usuario:</dt>
             <dd class="col-sm-9">@ObtenerNombreUsuario(venta.UsuarioId)</dd>
 
-            <dt class="col-sm-3">Servicio:</dt>
-            <dd class="col-sm-9">@ObtenerServicio(venta.ServicioId)</dd>
+            <dt class="col-sm-3">Direcci&oacute;n:</dt>
+            <dd class="col-sm-9">@venta.Direccion</dd>
 
             <dt class="col-sm-3">Monto Total:</dt>
             <dd class="col-sm-9">@venta.MontoTotal.ToString("N2")</dd>
         </dl>
+
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
                     <th>Fecha Estimada de Entrega</th>
-                    <th>Direcci&oacute;n</th>
+                    <th>Tipo de Servicio</th>
+                    <th>Cantidad</th>
                     <th>Servicio de Grua</th>
                     <th>Instalaci&oacute;n</th>
                     <th>Costo</th>
-
                 </tr>
             </thead>
             <tbody>
@@ -50,7 +52,8 @@
                 {
                     <tr>
                         <td>@detalle.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</td>
-                        <td>@detalle.Direccion</td>
+                        <td>@ObtenerServicio(detalle.ServicioId)</td>
+                        <td>@detalle.Cantidad</td>
                         <td>@detalle.ServicioGrua</td>
                         <td>@detalle.Instalacion</td>
                         <td>@detalle.Costo</td>

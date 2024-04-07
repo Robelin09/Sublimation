@@ -1,10 +1,13 @@
 ﻿@page "/DeleteServicio"
 @page "/DeleteServicio/{ServicioId:int}"
 @inject NavigationManager Navigation
-@inject ServicioService servicioservice
 @attribute [Authorize]
 @rendermode InteractiveServer
 @inject DialogService dialogService
+@inject InsumoService insumoService
+@inject ServicioService servicioservice
+
+
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
 
@@ -32,6 +35,24 @@
             <dt class="col-sm-3">Costo del Servicio:</dt>
             <dd class="col-sm-9">@servicio.CostoServicio.ToString("N2")</dd>
         </dl>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Nombre del Insumo</th>
+                    <th>Cantidad</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in ListaDetalleServicio)
+                {
+                    <tr>
+                        <td>@ObtenerNombreInsumo(detalle.InsumoId)</td>
+                        <td>@detalle.Cantidad.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
     <div class="card-footer">
         <a href="/IndexServicio" class="btn btn-outline-primary bi bi bi-arrow-return-left"> Volver</a>
@@ -43,13 +64,17 @@
     [Parameter]
     public int ServicioId { get; set; }
     public Servicios servicio { get; set; } = new Servicios();
+    public ServiciosDetalle detalle { get; set; } = new ServiciosDetalle();
+    public List<ServiciosDetalle> ListaDetalleServicio { get; set; } = new List<ServiciosDetalle>();
+    public List<Insumos> listaInsumos = new List<Insumos>();
 
     protected override async Task OnInitializedAsync()
     {
-        if (ServicioId > 0)
+        listaInsumos = await insumoService.Listar(t => true);
+        servicio = await servicioservice.GetServicios(ServicioId);
+        if (servicio != null)
         {
-            servicio.ServicioId = ServicioId;
-            await this.Buscar();
+            ListaDetalleServicio = servicio.ServiciosDetalle.ToList();
         }
     }
     public async Task Buscar()
@@ -81,10 +106,13 @@
             Atras();
         }
     }
+    public string ObtenerNombreInsumo(int insumo)
+    {
+        var NombreInsumo = listaInsumos.FirstOrDefault(c => c.InsumosId == insumo);
+        return NombreInsumo != null ? NombreInsumo.NombreInsumo : string.Empty;
+    }
     void Atras()
     {
         Navigation.NavigateTo("/IndexServicio");
     }
 }
-
-

@@ -3,9 +3,12 @@
 @inject NavigationManager Navigation
 @inject VentaService ventaservice
 @inject ClienteService clienteservice
+
 @attribute [Authorize]
 @inject UsuarioService usuarioService
 @inject ServicioService servicioService
+@inject InsumoService insumoService
+
 @inject NotificationService notificationService
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
 
@@ -33,7 +36,7 @@
                     </div>
                     <div class="col col-4">
                         <label>Fecha Registro:</label>
-                        <InputDate @bind-Value="venta.FechaRegistro" class="form-control"></InputDate>
+                        <InputDate @bind-Value="venta.FechaRegistro" class="form-control" disabled></InputDate>
                         <ValidationMessage For="(() => venta.FechaRegistro)"></ValidationMessage>
                     </div>
                 </div>
@@ -49,20 +52,10 @@
                         </InputSelect>
                         <ValidationMessage For="(() => venta.UsuarioId)"></ValidationMessage>
                     </div>
-                    <div class="col col-4">
-                        <label>Servicio:</label>
-                        <InputSelect @bind-Value="venta.ServicioId" class="form-select">
-                            <option value="0" selected disabled>Seleccione...</option>
-                            @foreach (var item in listaServicios)
-                            {
-                                <option value="@item.ServicioId">@item.TipoServicio</option>
-                            }
-                        </InputSelect>
-                        <ValidationMessage For="(() => venta.ServicioId)"></ValidationMessage>
-                    </div>
-                    <div class="col col-4">
-                        <label>Monto Total:</label>
-                        <InputNumber @bind-Value="venta.MontoTotal" class="form-control" readonly></InputNumber>
+                    <div>
+                        <label>Direcci&oacute;n:</label>
+                        <InputText @bind-Value="venta.Direccion" class="form-control"></InputText>
+                        <ValidationMessage For="(() => venta.Direccion)"></ValidationMessage>
                     </div>
                 </div>
             </div>
@@ -80,11 +73,26 @@
                         <InputDate min="@DateTime.Now.ToString("yyyy-MM-dd")"
                                    max="@DateTime.Now.AddMonths(1).ToString("yyyy-MM-dd")"
                                    @bind-Value="Detalle.FechaEstimadaEntrega"
-                                   class="form-control">
+                                   class="form-control" disabled>
                         </InputDate>
                         <ValidationMessage For="(() => Detalle.FechaEstimadaEntrega)"></ValidationMessage>
                     </div>
-
+                    <div class="col col-4">
+                        <label>Servicio:</label>
+                        <InputSelect @bind-Value="Detalle.ServicioId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
+                            @foreach (var item in listaServicios)
+                            {
+                                <option value="@item.ServicioId">@item.TipoServicio</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => Detalle.ServicioId)"></ValidationMessage>
+                    </div>
+                    <div class="col col-6">
+                        <label>Cantidad:</label>
+                        <InputNumber @bind-Value="Detalle.Cantidad" class="form-control"></InputNumber>
+                        <ValidationMessage For="(() => Detalle.Cantidad)"></ValidationMessage>
+                    </div>
                     <div class="col col">
                         <label>Servicio de grua:</label>
                         <InputCheckbox @bind-Value="Detalle.ServicioGrua" class="form-check"></InputCheckbox>
@@ -93,23 +101,13 @@
                         <label>Instalaci&oacute;n:</label>
                         <InputCheckbox @bind-Value="Detalle.Instalacion" class="form-check"></InputCheckbox>
                     </div>
-                    <div class="col col">
-                        <label>Costo:</label>
-                        <InputNumber @bind-Value="Detalle.Costo" class="form-control"></InputNumber>
-                        <ValidationMessage For="(() => Detalle.Costo)"></ValidationMessage>
-                    </div>
                 </div>
-                <div>
-                    <label>Direcci&oacute;n:</label>
-                    <InputText @bind-Value="Detalle.Direccion" class="form-control"></InputText>
-                    <ValidationMessage For="(() => Detalle.Direccion)"></ValidationMessage>
-                </div>
-                <br />
                 <table class='table table-bordered table-hover'>
                     <thead>
                         <tr>
                             <th>Fecha Estimada de Entrega</th>
-                            <th>Direcci&oacute;n</th>
+                            <th>Tipo de Servicio</th>
+                            <th>Cantidad</th>
                             <th>Servicio de Grua</th>
                             <th>Instalaci&oacute;n</th>
                             <th>Costo</th>
@@ -120,7 +118,8 @@
                         {
                             <tr>
                                 <td>@detalle.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</td>
-                                <td>@detalle.Direccion</td>
+                                <td>@detalle.ServicioId</td>
+                                <td>@detalle.Cantidad</td>
                                 <td>@detalle.ServicioGrua</td>
                                 <td>@detalle.Instalacion</td>
                                 <td>@detalle.Costo.ToString("N2")</td>
@@ -130,9 +129,17 @@
                         }
                     </tbody>
                 </table>
+
+               
                 <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-primary bi bi-plus-square">Agregar</button>
 
             </div>
+
+
+        </div>
+        <div class="col col-3" style="margin-left: 730px;">
+            <label>Monto Total:</label>
+            <InputNumber @bind-Value="venta.MontoTotal" class="form-control" readonly></InputNumber>
         </div>
         <div class="card-footer">
             <div class="input-group">
@@ -150,12 +157,14 @@
     public List<Clientes> listaClientes { get; set; } = new List<Clientes>();
     public List<Usuarios> listaUsuarios { get; set; } = new List<Usuarios>();
     public List<Servicios> listaServicios { get; set; } = new List<Servicios>();
+    public List<Insumos> listaInsumos { get; set; } = new List<Insumos>();
 
     protected override async Task OnInitializedAsync()
     {
         listaClientes = await clienteservice.Listar(t => true);
         listaUsuarios = await usuarioService.Listar(t => true);
         listaServicios = await servicioService.Listar(t => true);
+        listaInsumos = await insumoService.Listar(t => true);
         venta.FechaRegistro = DateTime.Now;
 
         Detalle.FechaEstimadaEntrega = DateTime.Now.AddDays(+15);
@@ -163,11 +172,11 @@
 
     public async Task Guardar()
     {
-        if (venta.ClienteId <= 0 || venta.ServicioId <= 0 || venta.UsuarioId <= 0)
+        if (venta.ClienteId <= 0 || venta.UsuarioId <= 0)
         {
             notificationService.ShowNotification(
                 titulo: "Error",
-                mensaje: "Debe seleccionar un Cliente, suplidor y un usuario.",
+                mensaje: "Debe seleccionar un Cliente y un usuario.",
                 NotificationSeverity.Error);
             return;
         }
@@ -190,6 +199,20 @@
             mensaje: "Guardado correctamente",
             NotificationSeverity.Success);
 
+            foreach (var DetalleAgregado in venta.VentasDetalle)
+            {
+                var servicio = listaServicios.FirstOrDefault(S => S.ServicioId == DetalleAgregado.ServicioId);
+
+                foreach (var InsumoDeServicio in servicio!.ServiciosDetalle)
+                {
+                    var insumo = listaInsumos.FirstOrDefault(I => I.InsumosId == InsumoDeServicio.InsumoId);
+                    if (insumo != null)
+                    {
+                        insumo.Cantidad -= DetalleAgregado.Cantidad * InsumoDeServicio.Cantidad;
+                        await insumoService.Guardar(insumo);
+                    }
+                }
+            }
             await Task.Delay(3000);
             Navigation.NavigateTo("/IndexVenta");
         }
@@ -203,8 +226,14 @@
     }
     public void AgregarDetalle()
     {
-        if (Detalle.FechaEstimadaEntrega != null && !string.IsNullOrEmpty(Detalle.Direccion))
+        if (Detalle.FechaEstimadaEntrega != null && Detalle.Cantidad > 0)
         {
+            var servicioSeleccionado = listaServicios.FirstOrDefault(s => s.ServicioId == Detalle.ServicioId);
+            if (servicioSeleccionado != null)
+            {
+                Detalle.Costo += servicioSeleccionado.CostoServicio;
+            }
+
             if (Detalle.ServicioGrua)
                 Detalle.Costo += 6700;
 
@@ -222,6 +251,5 @@
         Detalle = detalle;
         venta.VentasDetalle.Remove(detalle);
         venta.MontoTotal = venta.VentasDetalle.Sum(det => det.Costo);
-
     }
 }

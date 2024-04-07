@@ -8,6 +8,7 @@
 @inject VentaService ventaservice
 @inject ClienteService clienteservice
 @inject UsuarioService usuarioservice
+@inject InsumoService insumoService
 @inject ServicioService servicioservice
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
@@ -34,8 +35,8 @@
             <dt class="col-sm-3">Usuario:</dt>
             <dd class="col-sm-9">@ObtenerNombreUsuario(venta.UsuarioId)</dd>
 
-            <dt class="col-sm-3">Servicio:</dt>
-            <dd class="col-sm-9">@ObtenerServicio(venta.ServicioId)</dd>
+            <dt class="col-sm-3">Direcci&oacute;n:</dt>
+            <dd class="col-sm-9">@venta.Direccion</dd>
 
             <dt class="col-sm-3">Monto Total:</dt>
             <dd class="col-sm-9">@venta.MontoTotal.ToString("N2")</dd>
@@ -45,7 +46,8 @@
             <thead>
                 <tr>
                     <th>Fecha Estimada de Entrega</th>
-                    <th>Direcci&oacute;n</th>
+                    <th>Tipo de Servicio</th>
+                    <th>Cantidad</th>
                     <th>Servicio de Grua</th>
                     <th>Instalaci&oacute;n</th>
                     <th>Costo</th>
@@ -56,7 +58,8 @@
                 {
                     <tr>
                         <td>@detalle.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</td>
-                        <td>@detalle.Direccion</td>
+                        <td>@ObtenerServicio(detalle.ServicioId)</td>
+                        <td>@detalle.Cantidad</td>
                         <td>@detalle.ServicioGrua</td>
                         <td>@detalle.Instalacion</td>
                         <td>@detalle.Costo</td>
@@ -81,17 +84,20 @@
     public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
     public List<Usuarios> ListaUsuarios { get; set; } = new List<Usuarios>();
     public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
+    public List<Insumos> listaInsumos { get; set; } = new List<Insumos>();
 
     protected override async Task OnInitializedAsync()
     {
+        ListaClientes = await clienteservice.Listar(t => true);
+        ListaUsuarios = await usuarioservice.Listar(t => true);
+        ListaServicios = await servicioservice.Listar(t => true);
+        listaInsumos = await insumoService.Listar(t => true);
+
         venta = await ventaservice.GetVentas(VentaId);
         if (venta != null)
         {
             ListaDetalleVenta = venta.VentasDetalle.ToList();
         }
-        ListaClientes = await clienteservice.Listar(t => true);
-        ListaUsuarios = await usuarioservice.Listar(t => true);
-        ListaServicios = await servicioservice.Listar(t => true);
     }
     public async Task Buscar()
     {
@@ -113,12 +119,29 @@
     }
     public async Task Eliminar()
     {
+        var VentaEliminada = venta;
         if (!await ventaservice.Existe(venta.VentaId))
         {
             return;
         }
         if (await ventaservice.Eliminar(this.venta))
         {
+
+            foreach (var DetalleAgregado in VentaEliminada.VentasDetalle)
+            {
+                var servicio = ListaServicios.FirstOrDefault(S => S.ServicioId == DetalleAgregado.ServicioId);
+
+                foreach (var InsumoDeServicio in servicio!.ServiciosDetalle)
+                {
+                    var insumo = listaInsumos.FirstOrDefault(I => I.InsumosId == InsumoDeServicio.InsumoId);
+                    if (insumo != null)
+                    {
+                        insumo.Cantidad += DetalleAgregado.Cantidad * DetalleAgregado.Cantidad;
+                        await insumoService.Guardar(insumo);
+                    }
+                }
+
+            }
             Atras();
         }
     }
