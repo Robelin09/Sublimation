@@ -1,9 +1,12 @@
 ﻿@page "/ViewServicio"
 @page "/ViewServicio/{ServicioId:int}"
-@inject ServicioService servicioservice
+
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 @attribute [Authorize]
+@inject ServicioService servicioservice
+@inject InsumoService insumoService
+
 
 <PageTitle>Ver Servicio</PageTitle>
 
@@ -12,11 +15,12 @@
         <h1 class="mb-0">Detalles del Servicio</h1>
     </div>
     <div class="card-body">
+        <h5 class="card-title">Detalles del Servicio</h5>
         <dl class="row">
             <dt class="col-sm-3">ServicioId:</dt>
             <dd class="col-sm-9">@servicio.ServicioId</dd>
 
-            <dt class="col-sm-3">Fecha del Registro:</dt>
+            <dt class="col-sm-3">Fecha Registro:</dt>
             <dd class="col-sm-9">@servicio.FechaRegistro.ToString("dd/MM/yyyy")</dd>
 
             <dt class="col-sm-3">Tipo de Servicio:</dt>
@@ -28,6 +32,24 @@
             <dt class="col-sm-3">Costo del Servicio:</dt>
             <dd class="col-sm-9">@servicio.CostoServicio.ToString("N2")</dd>
         </dl>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Nombre del Insumo</th>
+                    <th>Cantidad</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in ListaDetalleServicio)
+                {
+                    <tr>
+                        <td>@ObtenerNombreInsumo(detalle.InsumoId)</td>
+                        <td>@detalle.Cantidad.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
     <div class="card-footer">
         <a href="/IndexServicio" class="btn btn-outline-primary bi bi bi-arrow-return-left"> Volver</a>
@@ -38,13 +60,17 @@
     [Parameter]
     public int ServicioId { get; set; }
     public Servicios servicio { get; set; } = new Servicios();
+    public ServiciosDetalle detalle { get; set; } = new ServiciosDetalle();
+    public List<ServiciosDetalle> ListaDetalleServicio { get; set; } = new List<ServiciosDetalle>();
+    public List<Insumos> listaInsumos = new List<Insumos>();
 
     protected override async Task OnInitializedAsync()
     {
-        if (ServicioId > 0)
+        listaInsumos = await insumoService.Listar(t => true);
+        servicio = await servicioservice.GetServicios(ServicioId);
+        if (servicio != null)
         {
-            servicio.ServicioId = ServicioId;
-            await this.Buscar();
+            ListaDetalleServicio = servicio.ServiciosDetalle.ToList();
         }
     }
     public async Task Buscar()
@@ -55,5 +81,10 @@
         {
             this.servicio = servicioEncontrado;
         }
+    }
+    public string ObtenerNombreInsumo(int insumo)
+    {
+        var NombreInsumo = listaInsumos.FirstOrDefault(c => c.InsumosId == insumo);
+        return NombreInsumo != null ? NombreInsumo.NombreInsumo : string.Empty;
     }
 }

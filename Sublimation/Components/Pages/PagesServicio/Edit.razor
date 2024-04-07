@@ -41,6 +41,54 @@
                     <ValidationMessage For="@(() => servicio.Descripcion)" />
                 </div>
             </div>
+            <div class="container">
+                <div class="card-header">
+                    <h4>Detalles de la Compra</h4>
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col col-6">
+                            <label>Insumo:</label>
+                            <InputSelect @bind-Value="detalle.InsumoId" class="form-select">
+                                <option value="0" selected disabled>Seleccione...</option>
+                                @foreach (var item in listaInsumos)
+                                {
+                                    <option value="@item.InsumosId">@item.NombreInsumo</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col col-6">
+                            <label>Cantidad:</label>
+                            <InputNumber @bind-Value="detalle.Cantidad" class="form-control"></InputNumber>
+                            <ValidationMessage For="(() => detalle.Cantidad)"></ValidationMessage>
+                        </div>
+                    </div>
+                    <br />
+                    <table class='table table-bordered table-hover'>
+                        <thead>
+                            <tr>
+                                <th>Nombre del Insumo</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in servicio.ServiciosDetalle)
+                            {
+                                <tr>
+                                    <td>@detalle.InsumoId</td>
+                                    <td>@detalle.Cantidad</td>
+                                    @*   <td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
+                                *@
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @*    <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-primary bi bi-plus-square">Agregar</button> *@
+                </div>
+
+            </div>
         </div>
         <div class="card-footer">
             <div class="input-group">
@@ -55,6 +103,8 @@
     [Parameter]
     public int ServicioId { get; set; }
     public Servicios servicio { get; set; } = new Servicios();
+    public List<Insumos> listaInsumos { get; set; } = new List<Insumos>();
+    public ServiciosDetalle detalle = new ServiciosDetalle();
 
     protected override async Task OnInitializedAsync()
     {

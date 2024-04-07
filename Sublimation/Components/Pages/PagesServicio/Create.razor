@@ -4,6 +4,8 @@
 @inject NavigationManager Navigation
 @inject ServicioService servicioservice
 @inject NotificationService notificationService
+@inject InsumoService insumoService
+
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
 
@@ -11,7 +13,7 @@
 <EditForm Model="servicio" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
 
-    <div class="card">
+    <div class="card shadow-lg">
         <div class="card-header">
             <h3>Registro de Servicios</h3>
         </div>
@@ -40,30 +42,77 @@
                     <ValidationMessage For="@(() => servicio.Descripcion)" />
                 </div>
             </div>
+            <div class="container">
+                <div class="card-header">
+                    <h4>Detalles del Servicio</h4>
+                </div>
+                <div class="card-body">
 
-        </div>
-        <div class="card-footer">
-            <div class="input-group">
-                <a href="/IndexServicio" class="btn btn-outline-danger bi bi-arrow-return-left"> Volver</a>
-                <button type="submit" class="btn btn-outline-success bi bi-floppy-fill"> Guardar</button>
+                    <div class="row">
+                        <div class="col col-6">
+                            <label>Insumo:</label>
+                            <InputSelect @bind-Value="detalle.InsumoId" class="form-select">
+                                <option value="0" selected disabled>Seleccione...</option>
+                                @foreach (var item in listaInsumos)
+                                {
+                                    <option value="@item.InsumosId">@item.NombreInsumo</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col col-6">
+                            <label>Cantidad:</label>
+                            <InputNumber @bind-Value="detalle.Cantidad" class="form-control"></InputNumber>
+                            <ValidationMessage For="(() => detalle.Cantidad)"></ValidationMessage>
+                        </div>
+                    </div>
+                    <br />
+                    <table class='table table-bordered table-hover'>
+                        <thead>
+                            <tr>
+                                <th>Nombre del Insumo</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in servicio.ServiciosDetalle)
+                            {
+                                <tr>
+                                    <td>@ObtenerNombreInsumo(detalle.InsumoId)</td>
+                                    <td>@detalle.Cantidad</td>
+                                    @*   <td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
+                                *@
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-primary bi bi-plus-square">Agregar</button>
+                </div>
+
+            </div>
+            <div class="card-footer">
+                <div class="input-group">
+                    <a href="/IndexServicio" class="btn btn-outline-danger bi bi-arrow-return-left"> Volver</a>
+                    <button type="submit" class="btn btn-outline-success bi bi-floppy-fill"> Guardar</button>
+                </div>
             </div>
         </div>
     </div>
+
+
 </EditForm>
 
 @code {
     [Parameter]
     public int ServicioId { get; set; }
     public Servicios servicio { get; set; } = new Servicios();
+    public List<Insumos> listaInsumos { get; set; } = new List<Insumos>();
+    public ServiciosDetalle detalle = new ServiciosDetalle();
+
 
     protected override async Task OnInitializedAsync()
     {
-        if (ServicioId > 0)
-        {
-            this.servicio.ServicioId = ServicioId;
-            await this.Buscar();
-        }
-
+        listaInsumos = await insumoService.Listar(t => true);
         servicio.FechaRegistro = DateTime.Now;
     }
     public async Task Buscar()
@@ -96,6 +145,21 @@
             NotificationSeverity.Error);
         }
     }
+    public string ObtenerNombreInsumo(int insumo)
+    {
+        var NombreInsumo = listaInsumos.FirstOrDefault(i => i.InsumosId == insumo);
+        return NombreInsumo != null ? NombreInsumo.NombreInsumo : string.Empty;
+    }
+
+    public void AgregarDetalle()
+    {
+        if (detalle.InsumoId != 0 && detalle.Cantidad != 0)
+        {
+            servicio.ServiciosDetalle.Add(detalle);
+            detalle = new ServiciosDetalle();
+        }
+    }
+
     void Atras()
     {
         Navigation.NavigateTo("/IndexServicio");
