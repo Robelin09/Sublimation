@@ -12,5 +12,5 @@ public class ComprasDetalle
     [Required(ErrorMessage = "Debe especificar la cantidad a comprar")]
     [Range(5, int.MaxValue, ErrorMessage = "La cantidad minima de productos a comprar es 5")]
     public int Cantidad { get; set; }
-  
+    public string? ImagenURL { get; set; }
 }
