@@ -6,6 +6,7 @@
 @inject UsuarioService usuarioService
 @attribute [Authorize]
 @inject CompraService compraService
+@inject InsumoService insumoService
 @inject DialogService dialogService
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
@@ -38,7 +39,6 @@
                 <tr>
                     <th>Nombre del Insumo</th>
                     <th>Cantidad</th>
-                    <th>Precio</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,7 +47,6 @@
                     <tr>
                         <td>@detalle.InsumoId</td>
                         <td>@detalle.Cantidad</td>
-                        <td>@detalle.Precio.ToString("N")</td>
                     </tr>
                 }
             </tbody>
@@ -69,11 +68,14 @@
 
     public List<Usuarios> ListaUsuarios { get; set; } = new List<Usuarios>();
     public List<Suplidores> ListaSuplidores { get; set; } = new List<Suplidores>();
+    public List<Insumos> listaInsumos = new List<Insumos>();
+
 
     protected override async Task OnInitializedAsync()
     {
         ListaUsuarios = await usuarioService.Listar(t => true);
         ListaSuplidores = await suplidorService.Listar(t => true);
+        listaInsumos = await insumoService.Listar(t => true);
         compra = await compraService.GetCompras(CompraId);
         if (compra != null)
         {
@@ -93,12 +95,22 @@
 
     public async Task Eliminar()
     {
+        var CompraEliminada = compra;
         if (!await compraService.Existe(compra.ComprasId))
         {
             return;
         }
         if (await compraService.Eliminar(this.compra))
         {
+            foreach (var DetalleAgregado in CompraEliminada.ComprasDetalle)
+            {
+                var insumo = listaInsumos.FirstOrDefault(I => I.InsumosId == DetalleAgregado.InsumoId);
+                if (insumo != null)
+                {
+                    insumo.Cantidad -= DetalleAgregado.Cantidad;
+                    await insumoService.Guardar(insumo);
+                }
+            }
             Navigation.NavigateTo("/IndexCompra");
         }
     }
