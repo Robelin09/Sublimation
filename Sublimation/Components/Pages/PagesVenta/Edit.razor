@@ -7,6 +7,8 @@
 @inject ClienteService clienteservice
 @inject UsuarioService usuarioService
 @inject ServicioService servicioService
+@inject InsumoService insumoService
+
 @inject NotificationService notificationService
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
 
@@ -49,16 +51,10 @@
                         </InputSelect>
                         <ValidationMessage For="(() => venta.UsuarioId)"></ValidationMessage>
                     </div>
-                    <div class="col col-4">
-                        <label>Servicio:</label>
-                        <InputSelect @bind-Value="venta.ServicioId" class="form-select">
-                            <option value="0" selected disabled>Seleccione...</option>
-                            @foreach (var item in listaServicios)
-                            {
-                                <option value="@item.ServicioId">@item.TipoServicio</option>
-                            }
-                        </InputSelect>
-                        <ValidationMessage For="(() => venta.ServicioId)"></ValidationMessage>
+                    <div>
+                        <label>Direcci&oacute;n:</label>
+                        <InputText @bind-Value="venta.Direccion" class="form-control"></InputText>
+                        <ValidationMessage For="(() => venta.Direccion)"></ValidationMessage>
                     </div>
                     <div class="col col-4">
                         <label>Monto Total:</label>
@@ -81,6 +77,17 @@
                         <InputDate @bind-Value="Detalle.FechaEstimadaEntrega" class="form-control"></InputDate>
                         <ValidationMessage For="(() => Detalle.FechaEstimadaEntrega)"></ValidationMessage>
                     </div>
+                    <div class="col col-4">
+                        <label>Servicio:</label>
+                        <InputSelect @bind-Value="Detalle.ServicioId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
+                            @foreach (var item in listaServicios)
+                            {
+                                <option value="@item.ServicioId">@item.TipoServicio</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => Detalle.ServicioId)"></ValidationMessage>
+                    </div>
                     <div class="col col">
                         <label>Servicio de grua:</label>
                         <InputCheckbox @bind-Value="Detalle.ServicioGrua" class="form-check"></InputCheckbox>
@@ -95,17 +102,15 @@
                         <ValidationMessage For="(() => Detalle.Costo)"></ValidationMessage>
                     </div>
                 </div>
-                <div>
-                    <label>Direcci&oacute;n:</label>
-                    <InputText @bind-Value="Detalle.Direccion" class="form-control"></InputText>
-                    <ValidationMessage For="(() => Detalle.Direccion)"></ValidationMessage>
-                </div>
+
                 <br />
                 <table class='table table-bordered table-hover'>
                     <thead>
                         <tr>
                             <th>Fecha Estimada de Entrega</th>
-                            <th>Direcci&oacute;n</th>
+                            <th>Tipo de Servicio</th>
+                            <th>Cantidad</th>
+
                             <th>Servicio de Grua</th>
                             <th>Instalaci&oacute;n</th>
                             <th>Costo</th>
@@ -116,7 +121,9 @@
                         {
                             <tr>
                                 <td>@detalle.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</td>
-                                <td>@detalle.Direccion</td>
+                                <td>@ObtenerServicio(detalle.ServicioId)</td>
+                                <td>@detalle.Cantidad</td>
+
                                 <td>@detalle.ServicioGrua</td>
                                 <td>@detalle.Instalacion</td>
                                 <td>@detalle.Costo.ToString("N2")</td>
@@ -148,9 +155,18 @@
     public List<Clientes> listaClientes { get; set; } = new List<Clientes>();
     public List<Usuarios> listaUsuarios { get; set; } = new List<Usuarios>();
     public List<Servicios> listaServicios { get; set; } = new List<Servicios>();
+    public List<Insumos> listaInsumos { get; set; } = new List<Insumos>();
+
+    public List<VentasDetalle> DetallesAgregados { get; set; } = new List<VentasDetalle>();
+    public List<VentasDetalle> DetallesEliminados { get; set; } = new List<VentasDetalle>();
+
 
     protected override async Task OnInitializedAsync()
     {
+        listaInsumos = await insumoService.Listar(t => true);
+        listaClientes = await clienteservice.Listar(t => true);
+        listaUsuarios = await usuarioService.Listar(t => true);
+        listaServicios = await servicioService.Listar(t => true);
         if (VentaId > 0)
         {
             venta = await ventaservice.GetVentas(VentaId);
@@ -167,9 +183,7 @@
         {
             Navigation.NavigateTo("/Error");
         }
-        listaClientes = await clienteservice.Listar(t => true);
-        listaUsuarios = await usuarioService.Listar(t => true);
-        listaServicios = await servicioService.Listar(t => true);
+
         venta.FechaRegistro = DateTime.Now;
         Detalle.FechaEstimadaEntrega = DateTime.Now.AddDays(+15);
     }
@@ -191,6 +205,43 @@
             mensaje: "Guardado correctamente",
             NotificationSeverity.Success);
 
+            foreach (var DetalleAgregado in DetallesAgregados)
+            {
+                var servicio = listaServicios.FirstOrDefault(S => S.ServicioId == DetalleAgregado.ServicioId);
+
+                foreach (var InsumoDeServicio in servicio!.ServiciosDetalle)
+                {
+                    var insumo = listaInsumos.FirstOrDefault(I => I.InsumosId == InsumoDeServicio.InsumoId);
+                    if (insumo != null)
+                    {
+                        insumo.Cantidad -= DetalleAgregado.Cantidad * DetalleAgregado.Cantidad;
+                        await insumoService.Guardar(insumo);
+                    }
+                }
+
+            }
+
+
+            foreach (var DetalleEliminado in DetallesEliminados)
+            {
+                var servicio = listaServicios.FirstOrDefault(S => S.ServicioId == DetalleEliminado.ServicioId);
+
+                foreach (var InsumoDeServicio in servicio!.ServiciosDetalle)
+                {
+                    var insumo = listaInsumos.FirstOrDefault(I => I.InsumosId == InsumoDeServicio.InsumoId);
+                    if (insumo != null)
+                    {
+                        insumo.Cantidad += DetalleEliminado.Cantidad * DetalleEliminado.Cantidad;
+                        await insumoService.Guardar(insumo);
+                    }
+                }
+
+            }
+
+
+            DetallesAgregados = new List<VentasDetalle>();
+            DetallesEliminados = new List<VentasDetalle>();
+
             await Task.Delay(3000);
             Navigation.NavigateTo("/IndexVenta");
         }
@@ -204,9 +255,10 @@
     }
     public void AgregarDetalle()
     {
-        if (Detalle.FechaEstimadaEntrega != null && !string.IsNullOrEmpty(Detalle.Direccion))
+        if (Detalle.FechaEstimadaEntrega != null)
         {
             venta.VentasDetalle.Add(Detalle);
+            DetallesAgregados.Add(Detalle);
             Detalle = new VentasDetalle();
         }
     }
@@ -214,5 +266,11 @@
     {
         Detalle = detalle;
         venta.VentasDetalle.Remove(detalle);
+        DetallesEliminados.Add(detalle);
+    }
+    public string ObtenerServicio(int servicio)
+    {
+        var Nombre = listaServicios.FirstOrDefault(c => c.ServicioId == servicio);
+        return Nombre != null ? Nombre.TipoServicio : string.Empty;
     }
 }
