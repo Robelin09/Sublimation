@@ -66,7 +66,7 @@
     public Servicios servicio { get; set; } = new Servicios();
     public ServiciosDetalle detalle { get; set; } = new ServiciosDetalle();
     public List<ServiciosDetalle> ListaDetalleServicio { get; set; } = new List<ServiciosDetalle>();
-    public List<Insumos> listaInsumos = new List<Insumos>();
+    public List<Insumos> listaInsumos { get; set; } = new List<Insumos>();
 
     protected override async Task OnInitializedAsync()
     {
