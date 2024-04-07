@@ -16,6 +16,10 @@ namespace Sublimation.Service
         {
             return await _contexto.Servicios.AnyAsync(s => s.ServicioId == ServicioId);
         }
+        public async Task<Servicios?> GetServicios(int id)
+        {
+            return await _contexto.Servicios.Include(s => s.ServiciosDetalle).FirstOrDefaultAsync(s => s.ServicioId == id);
+        }
         public async Task<bool> Insertar(Servicios servicio)
         {
             _contexto.Servicios.Add(servicio);
@@ -53,6 +57,7 @@ namespace Sublimation.Service
         public async Task<List<Servicios>> Listar(Expression<Func<Servicios, bool>> Criterio)
         {
             return await _contexto.Servicios
+                    .Include(s => s.ServiciosDetalle)
                     .Where(Criterio)
                     .AsNoTracking()
                     .ToListAsync();

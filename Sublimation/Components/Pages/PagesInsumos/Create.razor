@@ -46,6 +46,11 @@
                     <InputNumber @bind-Value="insumo.Cantidad" class="form-control"></InputNumber>
                     <ValidationMessage For="(() => insumo.Cantidad)"></ValidationMessage>
                 </div>
+                <div class="col col-4">
+                    <label>Precio:</label>
+                    <InputNumber @bind-Value="insumo.Precio" class="form-control"></InputNumber>
+                    <ValidationMessage For="(() => insumo.Precio)"></ValidationMessage>
+                </div>
                 <div class="col col-8">
                     <label>Descripci&oacute;n:</label>
                     <InputText @bind-Value="insumo.Descripcion" class="form-control"></InputText>

@@ -69,9 +69,10 @@
             <thead>
                 <tr>
                     <th scope="col" class="text-center">ID</th>
-                    <th scope="col" class="text-center">Suplidor</th>
                     <th scope="col" class="text-center">Nombre Insumo</th>
+                    <th scope="col" class="text-center">Suplidor</th>
                     <th scope="col" class="text-center">Cantidad</th>
+                    <th scope="col" class="text-center">Precio C/U</th>
                     <th scope="col" class="text-center">Fecha Registro</th>
                     <th scope="col" class="text-center">Editar</th>
                     <th scope="col" class="text-center">Eliminar</th>
@@ -84,9 +85,10 @@
                 {
                     <tr>
                         <td class="text-center">@insumo.InsumosId</td>
-                        <td class="text-center">@ObtenerNombreSuplidor(insumo.SuplidorId)</td>
                         <td class="text-center">@insumo.NombreInsumo</td>
+                        <td class="text-center">@ObtenerNombreSuplidor(insumo.SuplidorId)</td>
                         <td class="text-center">@insumo.Cantidad</td>
+                        <td class="text-center">@insumo.Precio</td>
                         <td class="text-center">@insumo.fechaRegistro.ToString("dd/MM/yyyy")</td>
                         <td class="text-center"><a href="/EditInsumo/@insumo.InsumosId" class="bi bi-pencil-square"></a></td>
                         <td class="text-center"><a href="/DeleteInsumo/@insumo.InsumosId" class="bi bi-trash"></a></td>

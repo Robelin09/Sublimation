@@ -84,11 +84,7 @@
                         <InputNumber @bind-Value="detalle.Cantidad" class="form-control"></InputNumber>
                         <ValidationMessage For="(() => detalle.Cantidad)"></ValidationMessage>
                     </div>
-                    <div class="col col-6">
-                        <label>Precio:</label>
-                        <InputNumber @bind-Value="detalle.Precio" class="form-control"></InputNumber>
-                        <ValidationMessage For="(() => detalle.Precio)"></ValidationMessage>
-                    </div>
+                 
                 </div>
                 <br />
                 <table class='table table-bordered table-hover'>
@@ -96,18 +92,16 @@
                         <tr>
                             <th>Nombre del Insumo</th>
                             <th>Cantidad</th>
-                            <th>Precio</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var detalle in compra.ComprasDetalle)
                         {
                             <tr>
-                                <td>@detalle.InsumoId</td>
+                                <td>@ObtenerNombreInsumo(detalle.InsumoId)</td>
                                 <td>@detalle.Cantidad</td>
-                                <td>@detalle.Precio.ToString("N2")</td>
-                                <td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
-                            </tr>
+@*                                 <td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
+ *@                            </tr>
                         }
                     </tbody>
                 </table>
@@ -163,7 +157,11 @@
         listaSuplidores = await suplidorService.Listar(t => true);
         compra.FechaCompra = DateTime.Now;
     }
-
+    public string ObtenerNombreInsumo(int insumo)
+    {
+        var NombreInsumo = listaInsumos.FirstOrDefault(c => c.InsumosId == insumo);
+        return NombreInsumo != null ? NombreInsumo.NombreInsumo : string.Empty;
+    }
     public async Task Guardar()
     {
         if (compra.SuplidorId <= 0 || compra.UsuarioId <= 0)
@@ -243,7 +241,7 @@
         {
             return;
         }
-        if (detalle.Cantidad > 0 && detalle.Precio > 0)
+        if (detalle.Cantidad > 0)
         {
             compra.ComprasDetalle.Add(detalle);
             DetallesAgregado.Add(detalle);
@@ -259,10 +257,10 @@
         }
     }
 
-    public void EliminarDetalle(ComprasDetalle details)
-    {
-        detalle = details;
-        compra.ComprasDetalle.Remove(details);
-        DetallesEliminado.Add(details);
-    }
+    // public void EliminarDetalle(ComprasDetalle details)
+    // {
+    //     detalle = details;
+    //     compra.ComprasDetalle.Remove(details);
+    //     DetallesEliminado.Add(details);
+    // }
 }

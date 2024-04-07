@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Library.Models;
 
@@ -18,4 +19,7 @@ public class Servicios
     [Required(ErrorMessage = "Este campo es requerido")]
     [Range(1.00, float.MaxValue, ErrorMessage = "Debe ser mayor a 1.00")]
     public float CostoServicio { get; set; }
+
+    [ForeignKey("ServicioId")]
+    public ICollection<ServiciosDetalle> ServiciosDetalle { get; set; } = new List<ServiciosDetalle>();
 }
