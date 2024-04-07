@@ -45,7 +45,7 @@
                 @foreach (var detalle in ListaDetalleCompras)
                 {
                     <tr>
-                        <td>@detalle.InsumoId</td>
+                        <td>@ObtenerNombreInsumo(detalle.InsumoId)</td>
                         <td>@detalle.Cantidad</td>
                     </tr>
                 }
@@ -68,7 +68,7 @@
 
     public List<Usuarios> ListaUsuarios { get; set; } = new List<Usuarios>();
     public List<Suplidores> ListaSuplidores { get; set; } = new List<Suplidores>();
-    public List<Insumos> listaInsumos = new List<Insumos>();
+    public List<Insumos> listaInsumos { get; set; } = new List<Insumos>();
 
 
     protected override async Task OnInitializedAsync()
@@ -92,7 +92,11 @@
             await Eliminar();
         }
     }
-
+    public string ObtenerNombreInsumo(int insumo)
+    {
+        var NombreInsumo = listaInsumos.FirstOrDefault(c => c.InsumosId == insumo);
+        return NombreInsumo != null ? NombreInsumo.NombreInsumo : string.Empty;
+    }
     public async Task Eliminar()
     {
         var CompraEliminada = compra;

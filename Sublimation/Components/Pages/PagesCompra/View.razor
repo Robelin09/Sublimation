@@ -6,6 +6,7 @@
 @inject SuplidorService suplidorService
 @inject UsuarioService usuarioService
 @inject CompraService compraService
+@inject InsumoService insumoService
 @inject DialogService dialogService
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
@@ -33,7 +34,6 @@
             <dt class="col-sm-3">Descripci&oacute;n:</dt>
             <dd class="col-sm-9">@compra.Descripcion</dd>
 
-            
         </dl>
         <table class="table table-bordered table-hover">
             <thead>
@@ -46,7 +46,7 @@
                 @foreach (var detalle in ListaDetalleCompras)
                 {
                     <tr>
-                        <td>@detalle.InsumoId</td>
+                        <td>@ObtenerNombreInsumo(detalle.InsumoId)</td>
                         <td>@detalle.Cantidad</td>
                     </tr>
                 }
@@ -65,6 +65,7 @@
     public Compras compra { get; set; } = new Compras();
     public ComprasDetalle CompraDetalle { get; set; } = new ComprasDetalle();
     public List<ComprasDetalle> ListaDetalleCompras { get; set; } = new List<ComprasDetalle>();
+    public List<Insumos> listaInsumos { get; set; } = new List<Insumos>();
 
 
     public List<Usuarios> ListaUsuarios { get; set; } = new List<Usuarios>();
@@ -73,6 +74,7 @@
     protected override async Task OnInitializedAsync()
     {
         ListaUsuarios = await usuarioService.Listar(t => true);
+        listaInsumos = await insumoService.Listar(t => true);
         ListaSuplidores = await suplidorService.Listar(t => true);
         compra = await compraService.GetCompras(CompraId);
         if (compra != null)
@@ -91,5 +93,10 @@
     {
         var Nombre = ListaSuplidores.FirstOrDefault(c => c.SuplidorId == suplidor);
         return Nombre != null ? Nombre.Nombre : string.Empty;
+    }
+    public string ObtenerNombreInsumo(int insumo)
+    {
+        var NombreInsumo = listaInsumos.FirstOrDefault(c => c.InsumosId == insumo);
+        return NombreInsumo != null ? NombreInsumo.NombreInsumo : string.Empty;
     }
 }
