@@ -18,4 +18,8 @@ public class Insumos
     public DateTime fechaRegistro { get; set; }
     [Required(ErrorMessage = "Este campo es obligaotio")]
     public string? Descripcion { get; set; }
+
+    [Required(ErrorMessage = "Debe especificar el precio")]
+    [Range(1.00, float.MaxValue, ErrorMessage = "EL precio debe ser mayor que 1.00")]
+    public float Precio { get; set; }
 }

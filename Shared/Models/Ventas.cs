@@ -19,9 +19,8 @@ public class Ventas
     [ForeignKey("UsuarioId")]
     public int UsuarioId { get; set; }
 
-    [Required(ErrorMessage = "Debe seleccionar un Servicio!!")]
-    [ForeignKey("ServicioId")]
-    public int ServicioId { get; set; }
+    [Required(ErrorMessage = "Debe Ingresar la Dirección")]
+    public string? Direccion { get; set; }
 
     [Required(ErrorMessage = "Este campo es requerido")]
     [Range(1.00, double.MaxValue, ErrorMessage = "Debe ser mayor a 1.00")]
