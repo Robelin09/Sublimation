@@ -35,13 +35,6 @@
                         <ValidationMessage For="(() => venta.ClienteId)"></ValidationMessage>
                     </div>
                     <div class="col col-4">
-                        <label>Fecha Registro:</label>
-                        <InputDate @bind-Value="venta.FechaRegistro" class="form-control" disabled></InputDate>
-                        <ValidationMessage For="(() => venta.FechaRegistro)"></ValidationMessage>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col col-4">
                         <label>Usuario:</label>
                         <InputSelect @bind-Value="venta.UsuarioId" class="form-select">
                             <option value="0" selected disabled>Seleccione...</option>
@@ -52,6 +45,15 @@
                         </InputSelect>
                         <ValidationMessage For="(() => venta.UsuarioId)"></ValidationMessage>
                     </div>
+                    <div class="col col-4">
+                        <label>Fecha Registro:</label>
+                        <InputDate @bind-Value="venta.FechaRegistro" class="form-control" disabled></InputDate>
+                        <ValidationMessage For="(() => venta.FechaRegistro)"></ValidationMessage>
+                    </div>
+                 
+                </div>
+                <div class="row">
+                   
                     <div>
                         <label>Direcci&oacute;n:</label>
                         <InputText @bind-Value="venta.Direccion" class="form-control"></InputText>
@@ -62,7 +64,7 @@
         </div>
         <div class="container">
             <div class="card-header">
-                <h4>Detalles de la Venta</h4>
+                <h4>Elección de Servicios</h4>
             </div>
             <div class="card-body">
 
@@ -118,7 +120,7 @@
                         {
                             <tr>
                                 <td>@detalle.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</td>
-                                <td>@detalle.ServicioId</td>
+                                <td>@ObtenerServicio(detalle.ServicioId)</td>
                                 <td>@detalle.Cantidad</td>
                                 <td>@detalle.ServicioGrua</td>
                                 <td>@detalle.Instalacion</td>
@@ -130,7 +132,7 @@
                     </tbody>
                 </table>
 
-               
+
                 <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-primary bi bi-plus-square">Agregar</button>
 
             </div>
@@ -231,7 +233,7 @@
             var servicioSeleccionado = listaServicios.FirstOrDefault(s => s.ServicioId == Detalle.ServicioId);
             if (servicioSeleccionado != null)
             {
-                Detalle.Costo += servicioSeleccionado.CostoServicio;
+                Detalle.Costo = servicioSeleccionado.CostoServicio * Detalle.Cantidad;
             }
 
             if (Detalle.ServicioGrua)
@@ -246,10 +248,19 @@
             venta.MontoTotal = venta.VentasDetalle.Sum(det => det.Costo);
         }
     }
+   
+   
+
+    public string ObtenerServicio(int servicio)
+    {
+        var Nombre = listaServicios.FirstOrDefault(c => c.ServicioId == servicio);
+        return Nombre != null ? Nombre.TipoServicio : string.Empty;
+    }
     public void EliminarDetalle(VentasDetalle detalle)
     {
         Detalle = detalle;
         venta.VentasDetalle.Remove(detalle);
         venta.MontoTotal = venta.VentasDetalle.Sum(det => det.Costo);
     }
+   
 }

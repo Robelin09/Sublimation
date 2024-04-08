@@ -32,7 +32,7 @@
             </div>
             <div class="row">
                 <div class="col col-4">
-                    <label>Costo:</label>
+                    <label>Costo total + Impuesto:</label>
                     <InputNumber @bind-Value="servicio.CostoServicio" class="form-control" disabled></InputNumber>
                     <ValidationMessage For="(() => servicio.CostoServicio)"></ValidationMessage>
                 </div>
@@ -44,7 +44,7 @@
             </div>
             <div class="container mt-3">
                 <div class="card-header">
-                    <h4>Detalles del Servicio</h4>
+                    <h4>Insumos Necesarios</h4>
                 </div>
                 <div class="card-body">
 
@@ -71,7 +71,7 @@
                             <tr>
                                 <th>Nombre del Insumo</th>
                                 <th>Cantidad</th>
-                                <th>Precio</th>
+                                <th>Precio Total</th>
                             </tr>
                         </thead>
                         <tbody>

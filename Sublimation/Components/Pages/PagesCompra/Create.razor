@@ -46,7 +46,7 @@
 
                     <div class="col col-4">
                         <label>Fecha Compra:</label>
-                        <InputDate @bind-Value="compra.FechaCompra" class="form-control"></InputDate>
+                        <InputDate @bind-Value="compra.FechaCompra" class="form-control" disabled></InputDate>
                         <ValidationMessage For="(() => compra.FechaCompra)"></ValidationMessage>
                     </div>
                     <div class="col col-8">
@@ -190,7 +190,6 @@
             NotificationSeverity.Error);
         }
     }
-
     public void AgregarDetalle()
     {
         detalle.ImagenURL = insumoService.ObtenerImagenUrlPorInsumoId(detalle.InsumoId);
@@ -203,23 +202,25 @@
         {
             return;
         }
-        if (detalle.Cantidad > listaInsumos.FirstOrDefault(I => I.InsumosId == detalle.InsumoId).Cantidad)
-        {
-            return;
-        }
-        if (detalle.Cantidad > 0)
-        {
-            compra.ComprasDetalle.Add(detalle);
-            detalle = new ComprasDetalle();
-
-        }
-        else
+        if (detalle.Cantidad <= 0)
         {
             notificationService.ShowNotification(
                 titulo: "Error",
-                mensaje: "Debe completar todos los campos del detalle correctamente.",
+                mensaje: "La cantidad debe ser mayor que 0.",
                 NotificationSeverity.Error);
+            return;
         }
+        // if (detalle.Cantidad > listaInsumos.FirstOrDefault(I => I.InsumosId == detalle.InsumoId).Cantidad)
+        // {
+        //     notificationService.ShowNotification(
+        //         titulo: "Error",
+        //         mensaje: "La cantidad supera la cantidad disponible en inventario.",
+        //         NotificationSeverity.Error);
+        //     return;
+        // }
+
+        compra.ComprasDetalle.Add(detalle);
+        detalle = new ComprasDetalle();
     }
 
     public void EliminarDetalle(ComprasDetalle details)

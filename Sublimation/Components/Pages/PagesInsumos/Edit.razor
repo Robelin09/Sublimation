@@ -10,7 +10,7 @@
 <RadzenDialog @rendermode="RenderMode.InteractiveServer"></RadzenDialog>
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
 
-<PageTitle>Editar Insumo</PageTitle>
+<PageTitle>Editor de Insumos</PageTitle>
 <EditForm Model="insumo" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
 
@@ -43,11 +43,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col col-4">
-                    <label>Cantidad:</label>
-                    <InputNumber @bind-Value="insumo.Cantidad" class="form-control"></InputNumber>
-                    <ValidationMessage For="(() => insumo.Cantidad)"></ValidationMessage>
-                </div>
+
                 <div class="col col-4">
                     <label>Precio:</label>
                     <InputNumber @bind-Value="insumo.Precio" class="form-control"></InputNumber>
@@ -78,6 +74,7 @@
     protected override async Task OnInitializedAsync()
     {
         listaSuplidores = await suplidoreService.Listar(t => true);
+        insumo.Cantidad = 0;
 
         if (InsumoId > 0)
         {
