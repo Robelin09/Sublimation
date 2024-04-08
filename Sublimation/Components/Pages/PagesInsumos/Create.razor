@@ -80,24 +80,36 @@
 
     public async Task Guardar()
     {
-        var guardo = await insumoService.Guardar(insumo);
-        if (guardo)
+        if (insumo.SuplidorId <= 0)
         {
             notificationService.ShowNotification(
-            titulo: "Exito",
-            mensaje: "Guardado correctamente",
-            NotificationSeverity.Success);
-
-            await Task.Delay(3000);
-            Atras();
+                titulo: "Error",
+                mensaje: "Debe seleccionar un Suplidor.",
+                NotificationSeverity.Error);
+            return;
         }
         else
         {
-            notificationService.ShowNotification(
-            titulo: "Error",
-            mensaje: "Ocurrio un error y no fue posible guardar",
-            NotificationSeverity.Error);
+            var guardo = await insumoService.Guardar(insumo);
+            if (guardo)
+            {
+                notificationService.ShowNotification(
+                titulo: "Exito",
+                mensaje: "Guardado correctamente",
+                NotificationSeverity.Success);
+
+                await Task.Delay(3000);
+                Atras();
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Ocurrio un error y no fue posible guardar",
+                NotificationSeverity.Error);
+            }
         }
+        
     }
 
     void Atras()
