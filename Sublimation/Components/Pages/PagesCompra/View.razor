@@ -25,7 +25,7 @@
             <dd class="col-sm-9">@compra.ComprasId</dd>
 
             <dt class="col-sm-3">Fecha del Registro:</dt>
-            <dd class="col-sm-9">@compra.FechaCompra</dd>
+            <dd class="col-sm-9">@compra.FechaCompra.ToString("dd/MM/yyyy")</dd>
 
             <dt class="col-sm-3">Suplidor:</dt>
             <dd class="col-sm-9">@ObtenerNombreSuplidor(compra.SuplidorId)</dd>
@@ -40,7 +40,6 @@
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
-                    <th></th>
                     <th>Nombre del Insumo</th>
                     <th>Cantidad</th>
                 </tr>
@@ -49,10 +48,6 @@
                 @foreach (var detalle in ListaDetalleCompras)
                 {
                     <tr>
-                        @if (!string.IsNullOrEmpty(detalle.ImagenURL))
-                        {
-                            <img src="@detalle.ImagenURL" alt="Imagen del Insumo" style="max-width: 60px; max-height: 60px;">
-                        }
                         <td>@ObtenerNombreInsumo(detalle.InsumoId)</td>
                         <td>@detalle.Cantidad</td>
                     </tr>
