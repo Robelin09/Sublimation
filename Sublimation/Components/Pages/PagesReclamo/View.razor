@@ -21,8 +21,8 @@
             <dt class="col-sm-3">Factura Id:</dt>
             <dd class="col-sm-9">@reclamo.VentaId</dd>
 
-            <dt class="col-sm-3">Cliente:</dt>
-            <dd class="col-sm-9">@ObtenerNombreCliente(reclamo.ClienteId)</dd>
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@ObtenerEmailCliente(reclamo.ClienteId)</dd>
 
             <dt class="col-sm-3">Descripci&oacute;n:</dt>
             <dd class="col-sm-9">@reclamo.Descripcion</dd>
@@ -63,9 +63,9 @@
         }
     }
 
-    public string ObtenerNombreCliente(int cliente)
+    public string ObtenerEmailCliente(int cliente)
     {
-        var Nombre = ListaClientes.FirstOrDefault(c => c.ClienteId == cliente);
-        return Nombre != null ? Nombre.Nombre : string.Empty;
+        var Email = ListaClientes.FirstOrDefault(c => c.ClienteId == cliente);
+        return Email != null ? Email.Email : string.Empty;
     }
 }

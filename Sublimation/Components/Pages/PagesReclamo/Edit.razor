@@ -43,7 +43,7 @@
                             <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaCliente)
                             {
-                                <option value="@item.ClienteId">@item.Nombre</option>
+                                <option value="@item.ClienteId">@item.Email</option>
                             }
                         </InputSelect>
                         <ValidationMessage For="(() => reclamo.ClienteId)"></ValidationMessage>
@@ -111,7 +111,6 @@
             await Guardar();
         }
     }
-
     public async Task Guardar()
     {
         if (reclamo.VentaId <= 0 || reclamo.ClienteId <= 0)
@@ -144,7 +143,6 @@
             }
         }
     }
-
     void Atras()
     {
         Navigation.NavigateTo("/IndexReclamo");

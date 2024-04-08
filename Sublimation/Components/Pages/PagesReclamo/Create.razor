@@ -40,7 +40,7 @@
                             <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaCliente)
                             {
-                                <option value="@item.ClienteId">@item.Nombre</option>
+                                <option value="@item.ClienteId">@item.Email</option>
                             }
                         </InputSelect>
                         <ValidationMessage For="(() => reclamo.ClienteId)"></ValidationMessage>

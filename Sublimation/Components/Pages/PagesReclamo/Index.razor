@@ -68,7 +68,7 @@
             <tr>
                 <th scope="col" class="text-center">Id</th>
                 <th scope="col" class="text-center">VentaId</th>
-                <th scope="col" class="text-center">Cliente</th>
+                <th scope="col" class="text-center">Email</th>
                 <th scope="col" class="text-center">Descripci&oacute;n</th>
                 <th scope="col" class="text-center">Acci&oacute;n Tomada</th>
                 <th scope="col" class="text-center">Fecha Reclamo</th>
@@ -83,7 +83,7 @@
                 <tr>
                     <td class="text-center">@reclamo.ReclamoId</td>
                     <td class="text-center">@reclamo.VentaId</td>
-                    <td class="text-center">@ObtenerNombreCliente(reclamo.ClienteId)</td>
+                    <td class="text-center">@ObtenerEmailCliente(reclamo.ClienteId)</td>
                     <td class="text-center">@reclamo.Descripcion</td>
                     <td class="text-center">@reclamo.AccionTomada</td
                     <td class="text-center">@reclamo.FechaReclamo.ToString("dd/MM/yyyy")</td>
@@ -149,9 +149,9 @@
         }
     }
     
-    public string ObtenerNombreCliente(int cliente)
+     public string ObtenerEmailCliente(int cliente)
     {
-        var Nombre = ListaClientes.FirstOrDefault(c => c.ClienteId == cliente);
-        return Nombre != null ? Nombre.Nombre : string.Empty;
+        var Email = ListaClientes.FirstOrDefault(c => c.ClienteId == cliente);
+        return Email != null ? Email.Email : string.Empty;
     }
 }
