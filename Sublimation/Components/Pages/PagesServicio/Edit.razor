@@ -33,7 +33,7 @@
             <div class="row">
                 <div class="col col-4">
                     <label>Costo Total + Impuesto:</label>
-                    <InputNumber @bind-Value="servicio.CostoServicio" class="form-control"></InputNumber>
+                    <InputNumber @bind-Value="servicio.CostoServicio" class="form-control" disabled ></InputNumber>
                     <ValidationMessage For="(() => servicio.CostoServicio)"></ValidationMessage>
                 </div>
                 <div class="col col-8">

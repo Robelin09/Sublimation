@@ -25,7 +25,7 @@
                 <div class="row">
                     <div class="col col-4">
                         <label>Cliente:</label>
-                        <InputSelect @bind-Value="venta.ClienteId" class="form-select" disabled>
+                        <InputSelect @bind-Value="venta.ClienteId" class="form-control" disabled>
                             <option value="0" selected disabled>Seleccione...</option>
                             @foreach (var item in listaClientes)
                             {
@@ -131,7 +131,7 @@
         </div>
         <div class="card-footer">
             <div class="input-group">
-                <a href="/IndexVentaCliente" class="btn btn-outline-danger bi bi-arrow-return-left"> Volver</a>
+                <a href="/" class="btn btn-outline-danger bi bi-arrow-return-left"> Volver</a>
                 <button type="submit" class="btn btn-outline-success bi bi-floppy-fill"> Guardar</button>
             </div>
         </div>
@@ -229,7 +229,7 @@
             var servicioSeleccionado = listaServicios.FirstOrDefault(s => s.ServicioId == Detalle.ServicioId);
             if (servicioSeleccionado != null)
             {
-                Detalle.Costo += servicioSeleccionado.CostoServicio;
+                Detalle.Costo += servicioSeleccionado.CostoServicio * Detalle.Cantidad;
             }
 
             if (Detalle.ServicioGrua)

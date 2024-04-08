@@ -36,8 +36,7 @@
                     </div>
                     <div class="col col-6">
                         <label>Email de Cliente a Reclamar:</label>
-                        <InputSelect @bind-Value="reclamo.ClienteId" class="form-select">
-                            <option value="0" selected disabled>Seleccione...</option>
+                        <InputSelect @bind-Value="reclamo.ClienteId" class="form-control">
                             @foreach (var item in listaCliente)
                             {
                                 <option value="@item.ClienteId">@item.Email</option>
@@ -75,6 +74,7 @@
     {
         listaCliente = await clienteservice.Listar(c => c.Nombre == "Vladimir");
 
+          reclamo.FechaReclamo = DateTime.Now;
         if (listaCliente.Any())
         {
             int clienteId = listaCliente.First().ClienteId;
@@ -82,7 +82,6 @@
             listaVenta = await ventaService.Listar(v => v.ClienteId == clienteId);
 
             reclamo.AccionTomada = "En espera...";
-            reclamo.FechaReclamo = DateTime.Now;
         }
     }
 

@@ -141,7 +141,7 @@
         </div>
         <div class="col col-3" style="margin-left: 730px;">
             <label>Monto Total:</label>
-            <InputNumber @bind-Value="venta.MontoTotal" class="form-control" readonly></InputNumber>
+            <InputNumber @bind-Value="venta.MontoTotal" class="form-control" readonly Format="N2"></InputNumber>
         </div>
         <div class="card-footer">
             <div class="input-group">
@@ -233,7 +233,7 @@
             var servicioSeleccionado = listaServicios.FirstOrDefault(s => s.ServicioId == Detalle.ServicioId);
             if (servicioSeleccionado != null)
             {
-                Detalle.Costo += servicioSeleccionado.CostoServicio;
+                Detalle.Costo += servicioSeleccionado.CostoServicio * Detalle.Cantidad;
             }
 
             if (Detalle.ServicioGrua)
