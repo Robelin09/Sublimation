@@ -1,0 +1,253 @@
+﻿@page "/CreateVentaCliente"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject VentaService ventaservice
+@inject ClienteService clienteservice
+
+@attribute [Authorize]
+@inject UsuarioService usuarioService
+@inject ServicioService servicioService
+@inject InsumoService insumoService
+
+@inject NotificationService notificationService
+<RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
+
+<PageTitle>Registro de Ventas</PageTitle>
+
+<EditForm Model="venta" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h3>Comprar</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="row">
+                    <div class="col col-4">
+                        <label>Cliente:</label>
+                        <InputSelect @bind-Value="venta.ClienteId" class="form-select" disabled>
+                            <option value="0" selected disabled>Seleccione...</option>
+                            @foreach (var item in listaClientes)
+                            {
+                                <option value="@item.ClienteId">@item.Nombre</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => venta.ClienteId)"></ValidationMessage>
+                    </div>
+                    <div class="col col-4">
+                        <label>Fecha Registro:</label>
+                        <InputDate @bind-Value="venta.FechaRegistro" class="form-control" disabled></InputDate>
+                        <ValidationMessage For="(() => venta.FechaRegistro)"></ValidationMessage>
+                    </div>
+                </div>
+                <div class="row">
+                    
+                    <div>
+                        <label>Direcci&oacute;n:</label>
+                        <InputText @bind-Value="venta.Direccion" class="form-control"></InputText>
+                        <ValidationMessage For="(() => venta.Direccion)"></ValidationMessage>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="card-header">
+                <h4>Servicios que desea</h4>
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col col-4">
+                        <label>Fecha de entrega Estimada:</label>
+                        <InputDate min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                   max="@DateTime.Now.AddMonths(1).ToString("yyyy-MM-dd")"
+                                   @bind-Value="Detalle.FechaEstimadaEntrega"
+                                   class="form-control" disabled>
+                        </InputDate>
+                        <ValidationMessage For="(() => Detalle.FechaEstimadaEntrega)"></ValidationMessage>
+                    </div>
+                    <div class="col col-4">
+                        <label>Servicio:</label>
+                        <InputSelect @bind-Value="Detalle.ServicioId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
+                            @foreach (var item in listaServicios)
+                            {
+                                <option value="@item.ServicioId">@item.TipoServicio</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => Detalle.ServicioId)"></ValidationMessage>
+                    </div>
+                    <div class="col col-6">
+                        <label>Cantidad:</label>
+                        <InputNumber @bind-Value="Detalle.Cantidad" class="form-control"></InputNumber>
+                        <ValidationMessage For="(() => Detalle.Cantidad)"></ValidationMessage>
+                    </div>
+                    <div class="col col">
+                        <label>Servicio de grua:</label>
+                        <InputCheckbox @bind-Value="Detalle.ServicioGrua" class="form-check"></InputCheckbox>
+                    </div>
+                    <div class="col col">
+                        <label>Instalaci&oacute;n:</label>
+                        <InputCheckbox @bind-Value="Detalle.Instalacion" class="form-check"></InputCheckbox>
+                    </div>
+                </div>
+                <table class='table table-bordered table-hover mt-3'>
+                    <thead>
+                        <tr>
+                            <th>Servicio</th>
+                            <th>Servicio de Grua</th>
+                            <th>Instalaci&oacute;n</th>
+                            <th>Cantidad</th>
+                            <th>Costo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detalle in venta.VentasDetalle)
+                        {
+                            <tr>
+                                <td>@ObtenerNombreServicio(detalle.ServicioId)</td>
+                                <td>@detalle.ServicioGrua</td>
+                                <td>@detalle.Instalacion</td>
+                                <td>@detalle.Cantidad</td>
+                                <td>@detalle.Costo.ToString("N2")</td>
+                                <td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+               
+                <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-primary bi bi-plus-square">Agregar</button>
+
+            </div>
+
+
+        </div>
+        <div class="col col-3" style="margin-left: 730px;">
+            <label>Monto Total:</label>
+            <InputNumber @bind-Value="venta.MontoTotal" class="form-control" readonly></InputNumber>
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <a href="/IndexVenta" class="btn btn-outline-danger bi bi-arrow-return-left"> Volver</a>
+                <button type="submit" class="btn btn-outline-success bi bi-floppy-fill"> Guardar</button>
+            </div>
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+    public Ventas venta { get; set; } = new Ventas();
+    public VentasDetalle Detalle { get; set; } = new VentasDetalle();
+    public List<Clientes> listaClientes { get; set; } = new List<Clientes>();
+    public List<Usuarios> listaUsuarios { get; set; } = new List<Usuarios>();
+    public List<Servicios> listaServicios { get; set; } = new List<Servicios>();
+    public List<Insumos> listaInsumos { get; set; } = new List<Insumos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaClientes = await clienteservice.Listar(t => true);
+        listaUsuarios = await usuarioService.Listar(t => true);
+        listaServicios = await servicioService.Listar(t => true);
+        listaInsumos = await insumoService.Listar(t => true);
+        venta.FechaRegistro = DateTime.Now;
+
+        venta.UsuarioId = 1;
+        venta.ClienteId = 4;
+        Detalle.FechaEstimadaEntrega = DateTime.Now.AddDays(+15);
+    }
+
+    public async Task Guardar()
+    {
+        if (venta.ClienteId <= 0 || venta.UsuarioId <= 0)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Debe seleccionar un Cliente y un usuario.",
+                NotificationSeverity.Error);
+            return;
+        }
+        else
+        {
+            if (venta.VentasDetalle.Count == 0)
+            {
+                notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "No se puede registrar una venta sin el detalle",
+                NotificationSeverity.Error);
+                return;
+            }
+        }
+        var guardo = await ventaservice.Guardar(venta);
+        if (guardo)
+        {
+            notificationService.ShowNotification(
+            titulo: "Exito",
+            mensaje: "Guardado correctamente",
+            NotificationSeverity.Success);
+
+            foreach (var DetalleAgregado in venta.VentasDetalle)
+            {
+                var servicio = listaServicios.FirstOrDefault(S => S.ServicioId == DetalleAgregado.ServicioId);
+
+                foreach (var InsumoDeServicio in servicio!.ServiciosDetalle)
+                {
+                    var insumo = listaInsumos.FirstOrDefault(I => I.InsumosId == InsumoDeServicio.InsumoId);
+                    if (insumo != null)
+                    {
+                        insumo.Cantidad -= DetalleAgregado.Cantidad * InsumoDeServicio.Cantidad;
+                        await insumoService.Guardar(insumo);
+                    }
+                }
+            }
+            await Task.Delay(3000);
+            Navigation.NavigateTo("/IndexVenta");
+        }
+        else
+        {
+            notificationService.ShowNotification(
+            titulo: "Error",
+            mensaje: "Ocurrio un error y no fue posible guardar",
+            NotificationSeverity.Error);
+        }
+    }
+
+
+    public string ObtenerNombreServicio(int usuario)
+    {
+        var Nombre = listaServicios.FirstOrDefault(c => c.ServicioId == usuario);
+        return Nombre != null ? Nombre.TipoServicio : string.Empty;
+    }
+
+    public void AgregarDetalle()
+    {
+        if (Detalle.FechaEstimadaEntrega != null && Detalle.Cantidad > 0)
+        {
+            var servicioSeleccionado = listaServicios.FirstOrDefault(s => s.ServicioId == Detalle.ServicioId);
+            if (servicioSeleccionado != null)
+            {
+                Detalle.Costo += servicioSeleccionado.CostoServicio;
+            }
+
+            if (Detalle.ServicioGrua)
+                Detalle.Costo += 6700;
+
+            if (Detalle.Instalacion)
+                Detalle.Costo += 3500;
+
+            venta.VentasDetalle.Add(Detalle);
+            Detalle = new VentasDetalle();
+            Detalle.FechaEstimadaEntrega = DateTime.Now.AddDays(+15);
+            venta.MontoTotal = venta.VentasDetalle.Sum(det => det.Costo);
+        }
+    }
+    public void EliminarDetalle(VentasDetalle detalle)
+    {
+        Detalle = detalle;
+        venta.VentasDetalle.Remove(detalle);
+        venta.MontoTotal = venta.VentasDetalle.Sum(det => det.Costo);
+    }
+}

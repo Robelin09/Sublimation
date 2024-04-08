@@ -5,7 +5,7 @@
 
 @attribute [Authorize]
 <PageTitle>Home</PageTitle>
-<AuthorizeView>
+<AuthorizeView Roles="Admin">
     <Authorized>
 
         <div class="card mx-auto shadow-lg" style="max-width:1000px">
@@ -84,7 +84,24 @@
         </div>
     </Authorized>
     <NotAuthorized>
-        <h1>Debes iniciar sesión para acceder a esta página.</h1>
+        <div class="card mx-auto shadow-lg" style="max-width:1000px">
+            <div class="card-header d-flex align-items-center justify-content-center">
+                <img src="Logo_.png" class="img-logo" />
+                <h2>Sublimation - Menú Principal</h2>
+            </div>
+            <div class="card-body" style="background-color: #ffff; background-size: cover;">
+                <div class="row justify-content-center">
+                    <div class="col-md-4 text-center">
+                        <a href="/CreateVentaCliente">
+                            <div class="menu-item">
+                                <img src="Icons/Compra.png" class="icon" />
+                                <p>Comprar</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -94,17 +111,17 @@
         border: 1px solid #ced4da;
         border-radius: 8px;
         padding: 10px;
-        transition: background-color 0.3s ease, transform 0.2s ease; 
-        background-color: rgba(255, 255, 255, 0.8); 
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        background-color: rgba(255, 255, 255, 0.8);
     }
 
         .menu-item:hover {
             background-color: #f8f9fa;
-            transform: scale(0.95); 
+            transform: scale(0.95);
         }
 
         .menu-item:active {
-            transform: scale(1); 
+            transform: scale(1);
         }
 
         .menu-item img {
@@ -118,12 +135,12 @@
         }
 
     .img-logo {
-        max-width: 50px; 
-        height: auto; 
+        max-width: 50px;
+        height: auto;
     }
 
     a, a:hover, a:focus, a:active {
-        text-decoration: none; 
-        color: #001B97; 
+        text-decoration: none;
+        color: #001B97;
     }
 </style>
