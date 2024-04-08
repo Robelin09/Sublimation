@@ -1,0 +1,158 @@
+﻿@page "/IndexVentaCliente"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject VentaService ventaservice
+@attribute [Authorize]
+@inject ClienteService clienteservice
+@inject UsuarioService usuarioservice
+@inject ServicioService servicioservice
+
+<PageTitle>Detalles de Ventas</PageTitle>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Detalles de Ventas</h3>
+        <a href="/CreateVenta" class="btn btn-outline-primary bi bi-plus-square">  Crear</a>
+    </div>
+    <div class="card-body">
+
+        <div class="input-group-text">
+
+            <label class="form-control-label col-1">Desde:</label>
+            <div class="col-3">
+                <input class="form-control" type="date" @bind="Desde" />
+            </div>
+
+            <label class="form-control-label col-1">Hasta:</label>
+            <div class="col-3">
+                <input class="form-control" type="date" @bind="Hasta" />
+            </div>
+
+            <div class="col-5">
+                <button type="button" @onclick="Buscar" class="btn btn-primary  ">
+                    <i class="bi bi-search" />
+                    <br /> Buscar
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <label>Filtrar Por</label>
+                <InputSelect @bind-Value="Opcion" class="form-select">
+                    <option value="0" selected disabled>Seleccione</option>
+                    <option value="1">VentaId</option>
+                </InputSelect>
+            </div>
+
+            @if (Opcion == 1)
+            {
+                <div class="col-3">
+                    <label>ID</label>
+                    <div class="input-group">
+                        <InputNumber @bind-Value="VentasId" class="form-control"></InputNumber>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center">ID</th>
+                    <th scope="col" class="text-center">Fecha Registro</th>
+                    <th scope="col" class="text-center">Cliente</th>
+                    <th scope="col" class="text-center">Usuario</th>
+                    <th scope="col" class="text-center">Direcci&oacute;n</th>
+                    <th scope="col" class="text-center">Monto Total</th>
+                    @*     <th scope="col" class="text-center">Editar</th>
+                    <th scope="col" class="text-center">Eliminar</th> *@
+                    <th scope="col" class="text-center">Ver</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var venta in ListaVentas)
+                {
+                    <tr>
+                        <td class="text-center">@venta.VentaId</td>
+                        <td class="text-center">@venta.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">@ObtenerNombreCliente(venta.ClienteId)</td>
+                        <td class="text-center">@ObtenerNombreUsuario(venta.UsuarioId)</td>
+                        <td class="text-center">@venta.Direccion</td>
+                        <td class="text-center">@venta.MontoTotal.ToString("N2")</td>
+                        @*  <td class="text-center"><a href="/EditVenta/@venta.VentaId" class="bi bi-pencil-square"></a></td>
+                    <td class="text-center"><a href="/DeleteVenta/@venta.VentaId" class="bi bi-trash"></a></td> *@
+                        <td class="text-center"><a href="/ViewVenta/@venta.VentaId" class="bi bi-eye"></a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="card-footer fw-bold">
+            <div class="row">
+
+                <p class="col col-6">Cantidad de Ventas: @ListaVentas.Count</p>
+                <p class="col col-6">Monto Total Ventas: @TotalVentas.ToString("N")</p>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="/" class="btn btn-outline-danger bi bi-house-door-fill"> Volver</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int VentaId { get; set; }
+    public Ventas venta { get; set; } = new Ventas();
+    public List<Ventas> ListaVentas { get; set; } = new List<Ventas>();
+    public int Opcion = 0;
+    public int VentasId { get; set; }
+    public double TotalVentas { get; set; }
+    public DateTime Desde { get; set; }
+    public DateTime Hasta { get; set; }
+    public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
+    public List<Usuarios> ListaUsuarios { get; set; } = new List<Usuarios>();
+    // public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaVentas = await ventaservice.Listar(t => true);
+        ListaClientes = await clienteservice.Listar(t => true);
+        ListaUsuarios = await usuarioservice.Listar(t => true);
+        // ListaServicios = await servicioservice.Listar(t => true);
+        Desde = DateTime.Now.AddMonths(-1);
+        Hasta = DateTime.Now;
+        TotalVentas = ListaVentas.Sum(v => v.MontoTotal);
+    }
+
+    public string ObtenerNombreCliente(int cliente)
+    {
+        var Nombre = ListaClientes.FirstOrDefault(c => c.ClienteId == cliente);
+        return Nombre != null ? Nombre.Nombre : string.Empty;
+    }
+    public string ObtenerNombreUsuario(int usuario)
+    {
+        var Nombre = ListaUsuarios.FirstOrDefault(c => c.UsuarioId == usuario);
+        return Nombre != null ? Nombre.Nombre : string.Empty;
+    }
+    // public string ObtenerServicio(int servicio)
+    // {
+    //     var Nombre = ListaServicios.FirstOrDefault(c => c.ServicioId == servicio);
+    //     return Nombre != null ? Nombre.TipoServicio : string.Empty;
+    // }
+    public async Task Buscar()
+    {
+        Hasta = new DateTime(Hasta.Year, Hasta.Month, Hasta.Day, 23, 59, 59);
+        if (Opcion == 0)
+        {
+            ListaVentas = await ventaservice.Listar(t => t.FechaRegistro >= Desde && t.FechaRegistro <= Hasta);
+        }
+        if (Opcion == 1)
+        {
+            if (VentasId <= 0)
+                ListaVentas = await ventaservice.Listar(t => true);
+            else
+                ListaVentas = await ventaservice.Listar(t => t.VentaId == VentasId && t.FechaRegistro >= Desde && t.FechaRegistro <= Hasta);
+        }
+    }
+}
