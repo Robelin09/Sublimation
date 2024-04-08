@@ -41,11 +41,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col col-4">
-                    <label>Cantidad:</label>
-                    <InputNumber @bind-Value="insumo.Cantidad" class="form-control"></InputNumber>
-                    <ValidationMessage For="(() => insumo.Cantidad)"></ValidationMessage>
-                </div>
+               
                 <div class="col col-4">
                     <label>Precio:</label>
                     <InputNumber @bind-Value="insumo.Precio" class="form-control"></InputNumber>
@@ -74,6 +70,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        insumo.Cantidad = 0;
         listaSuplidores = await suplidoreService.Listar(t => true);
         insumo.fechaRegistro = DateTime.Now;
     }
