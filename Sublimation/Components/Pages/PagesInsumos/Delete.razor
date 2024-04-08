@@ -20,9 +20,6 @@
             <dt class="col-sm-3">InsumosId:</dt>
             <dd class="col-sm-9">@insumo.InsumosId</dd>
 
-            <dt class="col-sm-3">Suplidor:</dt>
-            <dd class="col-sm-9">@ObtenerNombreSuplidor(insumo.SuplidorId)</dd>
-
             <dt class="col-sm-3">Nombre Insumo:</dt>
             <dd class="col-sm-9">@insumo.NombreInsumo</dd>
 
@@ -69,12 +66,6 @@
         {
             this.insumo = clienteEncontrado;
         }
-    }
-
-    public string ObtenerNombreSuplidor(int suplidor)
-    {
-        var Nombre = listaSuplidores.FirstOrDefault(c => c.SuplidorId == suplidor);
-        return Nombre != null ? Nombre.Nombre : string.Empty;
     }
 
     public async Task MostrarDialogoEliminar()

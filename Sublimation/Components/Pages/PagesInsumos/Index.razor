@@ -70,7 +70,6 @@
                 <tr>
                     <th scope="col" class="text-center">ID</th>
                     <th scope="col" class="text-center">Nombre Insumo</th>
-                    <th scope="col" class="text-center">Suplidor</th>
                     <th scope="col" class="text-center">Cantidad</th>
                     <th scope="col" class="text-center">Precio C/U</th>
                     <th scope="col" class="text-center">Fecha Registro</th>
@@ -86,7 +85,6 @@
                     <tr>
                         <td class="text-center">@insumo.InsumosId</td>
                         <td class="text-center">@insumo.NombreInsumo</td>
-                        <td class="text-center">@ObtenerNombreSuplidor(insumo.SuplidorId)</td>
                         <td class="text-center">@insumo.Cantidad</td>
                         <td class="text-center">@insumo.Precio</td>
                         <td class="text-center">@insumo.fechaRegistro.ToString("dd/MM/yyyy")</td>
@@ -124,12 +122,6 @@
         listaSuplidores = await suplidoreService.Listar(t => true);
         Desde = DateTime.Now.AddMonths(-1);
         Hasta = DateTime.Now;
-    }
-
-    public string ObtenerNombreSuplidor(int suplidor)
-    {
-        var Nombre = listaSuplidores.FirstOrDefault(c => c.SuplidorId == suplidor);
-        return Nombre != null ? Nombre.Nombre : string.Empty;
     }
 
     public async Task Buscar()

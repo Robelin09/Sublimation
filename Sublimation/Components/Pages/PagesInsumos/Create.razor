@@ -9,7 +9,7 @@
 <RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
 
 <PageTitle>Registro de Insumos</PageTitle>
-<EditForm Model="insumo"  OnValidSubmit="Guardar">
+<EditForm Model="insumo" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
 
     <div class="card">
@@ -18,17 +18,7 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col col-4">
-                    <label>Suplidor:</label>
-                    <InputSelect @bind-Value="insumo.SuplidorId" class="form-select">
-                        <option value="0" selected disabled>Seleccione...</option>
-                        @foreach (var item in listaSuplidores)
-                        {
-                            <option value="@item.SuplidorId">@item.Nombre</option>
-                        }
-                    </InputSelect>
-                    <ValidationMessage For="(() => insumo.SuplidorId)"></ValidationMessage>
-                </div>
+
                 <div class="col col-4">
                     <label>Nombre Insumo:</label>
                     <InputText @bind-Value="insumo.NombreInsumo" class="form-control"></InputText>
@@ -41,7 +31,7 @@
                 </div>
             </div>
             <div class="row">
-               
+
                 <div class="col col-4">
                     <label>Precio:</label>
                     <InputNumber @bind-Value="insumo.Precio" class="form-control"></InputNumber>
@@ -77,36 +67,24 @@
 
     public async Task Guardar()
     {
-        if (insumo.SuplidorId <= 0)
+        var guardo = await insumoService.Guardar(insumo);
+        if (guardo)
         {
             notificationService.ShowNotification(
-                titulo: "Error",
-                mensaje: "Debe seleccionar un Suplidor.",
-                NotificationSeverity.Error);
-            return;
+            titulo: "Exito",
+            mensaje: "Guardado correctamente",
+            NotificationSeverity.Success);
+
+            await Task.Delay(3000);
+            Atras();
         }
         else
         {
-            var guardo = await insumoService.Guardar(insumo);
-            if (guardo)
-            {
-                notificationService.ShowNotification(
-                titulo: "Exito",
-                mensaje: "Guardado correctamente",
-                NotificationSeverity.Success);
-
-                await Task.Delay(3000);
-                Atras();
-            }
-            else
-            {
-                notificationService.ShowNotification(
-                titulo: "Error",
-                mensaje: "Ocurrio un error y no fue posible guardar",
-                NotificationSeverity.Error);
-            }
+            notificationService.ShowNotification(
+            titulo: "Error",
+            mensaje: "Ocurrio un error y no fue posible guardar",
+            NotificationSeverity.Error);
         }
-        
     }
 
     void Atras()

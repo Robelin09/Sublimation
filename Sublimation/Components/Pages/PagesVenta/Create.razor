@@ -233,7 +233,7 @@
             var servicioSeleccionado = listaServicios.FirstOrDefault(s => s.ServicioId == Detalle.ServicioId);
             if (servicioSeleccionado != null)
             {
-                Detalle.Costo = servicioSeleccionado.CostoServicio * Detalle.Cantidad;
+                Detalle.Costo += servicioSeleccionado.CostoServicio;
             }
 
             if (Detalle.ServicioGrua)
@@ -242,14 +242,27 @@
             if (Detalle.Instalacion)
                 Detalle.Costo += 3500;
 
+            foreach (var detalleInsumo in servicioSeleccionado.ServiciosDetalle)
+            {
+                var insumo = listaInsumos.FirstOrDefault(i => i.InsumosId == detalleInsumo.InsumoId);
+                if (insumo != null && Detalle.Cantidad * detalleInsumo.Cantidad > insumo.Cantidad)
+                {
+                    notificationService.ShowNotification(
+                        titulo: "Error",
+                        mensaje: $"No hay suficientes cantidades de insumos disponibles para realizar esta venta.",
+                        NotificationSeverity.Error);
+                    return;
+                }
+            }
+
             venta.VentasDetalle.Add(Detalle);
             Detalle = new VentasDetalle();
             Detalle.FechaEstimadaEntrega = DateTime.Now.AddDays(+15);
             venta.MontoTotal = venta.VentasDetalle.Sum(det => det.Costo);
         }
     }
-   
-   
+
+
 
     public string ObtenerServicio(int servicio)
     {

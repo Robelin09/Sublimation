@@ -238,6 +238,19 @@
             if (Detalle.Instalacion)
                 Detalle.Costo += 3500;
 
+            foreach (var detalleInsumo in servicioSeleccionado.ServiciosDetalle)
+            {
+                var insumo = listaInsumos.FirstOrDefault(i => i.InsumosId == detalleInsumo.InsumoId);
+                if (insumo != null && Detalle.Cantidad * detalleInsumo.Cantidad > insumo.Cantidad)
+                {
+                    notificationService.ShowNotification(
+                        titulo: "Error",
+                        mensaje: $"No hay suficientes cantidades de insumos disponibles para realizar esta compra.",
+                        NotificationSeverity.Error);
+                    return;
+                }
+            }
+
             venta.VentasDetalle.Add(Detalle);
             Detalle = new VentasDetalle();
             Detalle.FechaEstimadaEntrega = DateTime.Now.AddDays(+15);
