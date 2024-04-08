@@ -1,0 +1,137 @@
+﻿@page "/CreateReclamoCliente"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject ReclamoService reclamoservice
+@attribute [Authorize]
+@inject ClienteService clienteservice
+@inject VentaService ventaService
+@inject NotificationService notificationService
+<RadzenNotification @rendermode="RenderMode.InteractiveServer"></RadzenNotification>
+
+<PageTitle>Crear Reclamo</PageTitle>
+<EditForm Model="reclamo" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h3>Crear Reclamo</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="row">
+                    <div class="col col-6">
+                        <label>Fecha del Reclamo:</label>
+                        <InputDate @bind-Value="reclamo.FechaReclamo" class="form-control"></InputDate>
+                        <ValidationMessage For="(() => reclamo.FechaReclamo)"></ValidationMessage>
+                    </div>
+                    <div class="col col-6">
+                        <label>Venta Id a Reclamar:</label>
+                        <InputSelect @bind-Value="reclamo.VentaId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
+                            @foreach (var item in listaVenta)
+                            {
+                                <option value="@item.VentaId">@item.VentaId</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => reclamo.VentaId)"></ValidationMessage>
+                    </div>
+                    <div class="col col-6">
+                        <label>Email de Cliente a Reclamar:</label>
+                        <InputSelect @bind-Value="reclamo.ClienteId" class="form-select">
+                            <option value="0" selected disabled>Seleccione...</option>
+                            @foreach (var item in listaCliente)
+                            {
+                                <option value="@item.ClienteId">@item.Email</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => reclamo.ClienteId)"></ValidationMessage>
+                    </div>
+                </div>
+                <div class="row">
+                    <div>
+                        <label>Descripci&oacute;n:</label>
+                        <InputTextArea @bind-Value="reclamo.Descripcion" class="form-control"></InputTextArea>
+                        <ValidationMessage For="(() => reclamo.Descripcion)"></ValidationMessage>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <a href="/IndexReclamoCliente" class="btn btn-outline-primary bi bi-arrow-return-left"> Volver</a>
+                <button type="submit" class="btn btn-outline-success bi bi-floppy-fill"> Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int ReclamoId { get; set; }
+    public Reclamos reclamo { get; set; } = new Reclamos();
+    public List<Ventas> listaVenta { get; set; } = new List<Ventas>();
+    public List<Clientes> listaCliente { get; set; } = new List<Clientes>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaCliente = await clienteservice.Listar(c => c.Nombre == "Vladimir");
+
+        if (listaCliente.Any())
+        {
+            int clienteId = listaCliente.First().ClienteId;
+
+            listaVenta = await ventaService.Listar(v => v.ClienteId == clienteId);
+
+            reclamo.AccionTomada = "En espera...";
+            reclamo.FechaReclamo = DateTime.Now;
+        }
+    }
+
+
+    public async Task Buscar()
+    {
+        var reclamoEncontrado = await reclamoservice.Buscar(reclamo.ReclamoId);
+
+        if (reclamoEncontrado != null)
+        {
+            this.reclamo = reclamoEncontrado;
+        }
+    }
+
+    public async Task Guardar()
+    {
+        if (reclamo.VentaId <= 0 || reclamo.ClienteId <= 0)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Debe seleccionar una venta y un Cliente.",
+                NotificationSeverity.Error);
+            return;
+        }
+        else
+        {
+            var guardo = await reclamoservice.Guardar(reclamo);
+            if (guardo)
+            {
+                notificationService.ShowNotification(
+                titulo: "Exito",
+                mensaje: "Guardado correctamente",
+                NotificationSeverity.Success);
+
+                await Task.Delay(3000);
+                Atras();
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Ocurrio un error y no fue posible guardar",
+                NotificationSeverity.Error);
+            }
+        }
+    }
+
+    void Atras()
+    {
+        Navigation.NavigateTo("/IndexReclamoCliente");
+    }
+}
