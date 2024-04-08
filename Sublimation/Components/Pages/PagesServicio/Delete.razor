@@ -34,12 +34,14 @@
 
             <dt class="col-sm-3">Costo del Servicio:</dt>
             <dd class="col-sm-9">@servicio.CostoServicio.ToString("N2")</dd>
+
         </dl>
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
                     <th>Nombre del Insumo</th>
                     <th>Cantidad</th>
+                    <th>Precio Total</th>
 
                 </tr>
             </thead>
@@ -49,6 +51,8 @@
                     <tr>
                         <td>@ObtenerNombreInsumo(detalle.InsumoId)</td>
                         <td>@detalle.Cantidad.ToString("N2")</td>
+                        <td>@(ObtenerPrecioDetalle(detalle))</td>
+
                     </tr>
                 }
             </tbody>
@@ -94,6 +98,15 @@
         {
             await Eliminar();
         }
+    }
+    public float ObtenerPrecioDetalle(ServiciosDetalle detalle)
+    {
+        var insumoSeleccionado = listaInsumos.FirstOrDefault(i => i.InsumosId == detalle.InsumoId);
+        if (insumoSeleccionado != null)
+        {
+            return insumoSeleccionado.Precio * detalle.Cantidad;
+        }
+        return 0f;
     }
     public async Task Eliminar()
     {

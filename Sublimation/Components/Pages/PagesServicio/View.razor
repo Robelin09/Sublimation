@@ -37,6 +37,7 @@
                 <tr>
                     <th>Nombre del Insumo</th>
                     <th>Cantidad</th>
+                    <th>Precio Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,6 +46,8 @@
                     <tr>
                         <td>@ObtenerNombreInsumo(detalle.InsumoId)</td>
                         <td>@detalle.Cantidad.ToString("N2")</td>
+                        <td>@(ObtenerPrecioDetalle(detalle))</td>
+
                     </tr>
                 }
             </tbody>
@@ -80,6 +83,15 @@
         {
             this.servicio = servicioEncontrado;
         }
+    }
+    public float ObtenerPrecioDetalle(ServiciosDetalle detalle)
+    {
+        var insumoSeleccionado = listaInsumos.FirstOrDefault(i => i.InsumosId == detalle.InsumoId);
+        if (insumoSeleccionado != null)
+        {
+            return insumoSeleccionado.Precio * detalle.Cantidad;
+        }
+        return 0f;
     }
     public string ObtenerNombreInsumo(int insumo)
     {
