@@ -65,8 +65,8 @@
                     <th scope="col" class="text-center">Usuario</th>
                     <th scope="col" class="text-center">Direcci&oacute;n</th>
                     <th scope="col" class="text-center">Monto Total</th>
-                    <th scope="col" class="text-center">Editar</th>
-                    <th scope="col" class="text-center">Eliminar</th>
+                @*     <th scope="col" class="text-center">Editar</th>
+                    <th scope="col" class="text-center">Eliminar</th> *@
                     <th scope="col" class="text-center">Ver</th>
                 </tr>
             </thead>
@@ -80,8 +80,8 @@
                         <td class="text-center">@ObtenerNombreUsuario(venta.UsuarioId)</td>
                         <td class="text-center">@venta.Direccion</td>
                         <td class="text-center">@venta.MontoTotal.ToString("N2")</td>
-                        <td class="text-center"><a href="/EditVenta/@venta.VentaId" class="bi bi-pencil-square"></a></td>
-                        <td class="text-center"><a href="/DeleteVenta/@venta.VentaId" class="bi bi-trash"></a></td>
+                       @*  <td class="text-center"><a href="/EditVenta/@venta.VentaId" class="bi bi-pencil-square"></a></td>
+                        <td class="text-center"><a href="/DeleteVenta/@venta.VentaId" class="bi bi-trash"></a></td> *@
                         <td class="text-center"><a href="/ViewVenta/@venta.VentaId" class="bi bi-eye"></a></td>
                     </tr>
                 }
