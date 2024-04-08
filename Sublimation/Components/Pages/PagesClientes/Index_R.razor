@@ -71,8 +71,8 @@
                 <th scope="col" class="text-center">Descripci&oacute;n</th>
                 <th scope="col" class="text-center">Acci&oacute;n Tomada</th>
                 <th scope="col" class="text-center">Fecha Reclamo</th>
-                <th scope="col" class="text-center">Editar</th>
-                <th scope="col" class="text-center">Eliminar</th>
+            @*     <th scope="col" class="text-center">Editar</th>
+                <th scope="col" class="text-center">Eliminar</th> *@
                 <th scope="col" class="text-center">Ver</th>
             </tr>
         </thead>
@@ -85,9 +85,9 @@
                     <td class="text-center">@reclamo.Descripcion</td>
                     <td class="text-center">@reclamo.AccionTomada</td
                     <td class="text-center">@reclamo.FechaReclamo.ToString("dd/MM/yyyy")</td>
-                    <td class="text-center"><a href="/EditReclamo/@reclamo.ReclamoId" class="bi bi-pencil-square"></a></td>
-                    <td class="text-center"><a href="/DeleteReclamo/@reclamo.ReclamoId" class="bi bi-trash"></a></td>
-                    <td class="text-center"><a href="/ViewReclamo/@reclamo.ReclamoId" class="bi bi-eye"></a></td>
+                 @*    <td class="text-center"><a href="/EditReclamo/@reclamo.ReclamoId" class="bi bi-pencil-square"></a></td>
+                    <td class="text-center"><a href="/DeleteReclamo/@reclamo.ReclamoId" class="bi bi-trash"></a></td> *@
+                    <td class="text-center"><a href="/ViewReclamoCliente/@reclamo.ReclamoId" class="bi bi-eye"></a></td>
                 </tr>
             }
         </tbody>
